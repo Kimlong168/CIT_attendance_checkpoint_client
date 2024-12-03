@@ -7,6 +7,11 @@ import downloadQrcode from "@/utils/downloadQrcode";
 const url = import.meta.env.VITE_APP_BASE_URL + "/user/attendance?att=";
 
 export const renderRows = (item, index, handleDelete) => {
+  
+  const wifiNames = item.allowedNetworkRanges
+    .map((range) => range.wifiName)
+    .join(", ");
+
   return (
     <>
       <tr
@@ -15,9 +20,9 @@ export const renderRows = (item, index, handleDelete) => {
       >
         <td className="px-4 py-3">{index + 1}</td>
         <td className="px-4 py-3 min-w-[250px]">{item.location}</td>
-        <td className="px-4 py-3 min-w-[250px]">{item.lat}</td>
-        <td className="px-4 py-3 min-w-[250px]">{item.lng}</td>
-        <td className="px-4 py-3 min-w-[250px]">{item.radius} m</td>
+        <td className="px-4 py-3 min-w-[250px]">{item.workStartTime}</td>
+        <td className="px-4 py-3 min-w-[250px]">{item.workEndTime}</td>
+        <td className="px-4 py-3 min-w-[250px]">{wifiNames}</td>
         <td className="px-4 py-3 min-w-[250px]">
           <div
             id={`${item.location.replace(/\s+/g, "")}`}

@@ -30,7 +30,7 @@ export default {
         "secondary-bold": ["kantumruyProBold", "ttnormsBold"],
       },
       colors: {
-        primary: "#fa9f00",
+        primary: "#0E0077",
         "primary-content": "A0A#00A",
         "primary-light": "#ffb32e",
         "primary-dark": "#c77f00",

@@ -15,7 +15,6 @@ import {
 import { handleDeleteFunction } from "@/utils/handleDeleteFunction";
 import { notify } from "@/utils/toastify";
 import getNumberOfDays from "@/utils/getNumberOfDays";
-import { Link } from "react-router-dom";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import ExportToExcel from "@/components/table/ExportToExcel";
 import ExportToPDF from "@/components/table/ExportToPDF";
@@ -170,17 +169,24 @@ const CrudLeaveRequest = () => {
 
   return (
     <div
-      className={`flex justify-center items-center relative min-h-screen bg-black/70 py-6`}
+      className={`flex justify-center items-center relative min-h-screen bg-gray-100 `}
     >
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md relative m-2">
-        <Link to="/user/profile">
-          <button className="mt-4 flex items-center gap-2 text-white w-fit px-2 py-2 bg-red-500 hover:bg-orange-600 border border-white rounded-xl top-0 left-4 fixed">
-            <MdOutlineArrowBackIos />
-          </button>
-        </Link>
+      <div
+        className="bg-white shadow-md rounded-xl p-6 w-[375px] relative m-2"
+        style={{ minHeight: "calc(100vh - 30px)" }}
+      >
+        <button
+          onClick={() => {
+            window.history.back();
+          }}
+          className="mt-6 flex items-center gap-2 text-white w-fit px-2 py-2 bg-red-500 hover:bg-orange-600 border border-white rounded-xl top-0 left-4 fixed"
+        >
+          <MdOutlineArrowBackIos />
+        </button>
+
         {/* update and create leave request form */}
         <div>
-          <div className="flex items-center justify-between  mb-4">
+          <div className="flex items-center justify-between my-5">
             <h2 className="text-2xl font-bold">Leave Request Form </h2>
             {editingIndex >= 0 && (
               <span

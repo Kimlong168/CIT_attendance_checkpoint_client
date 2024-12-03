@@ -140,7 +140,9 @@ const AdminLayout = () => {
           <div className="flex items-center justify-start md:justify-center gap-5 pl-3 w-14 md:w-64 h-14  border-l-8 border-none ">
             <div>
               <Link to="/">
-                <img src={assets.logo} alt="logo" />
+                {/* <img width={60} src={assets.logo} alt="logo" />
+                 */}
+                CIT Attendance Checkpoint
               </Link>
             </div>
           </div>

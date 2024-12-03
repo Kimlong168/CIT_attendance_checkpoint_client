@@ -9,13 +9,16 @@ const StaffProfile = () => {
 
   return (
     <div
-      className={`flex justify-center items-center relative h-screen bg-black/70`}
+      className={`flex justify-center items-center relative min-h-screen bg-gray-100 `}
     >
-      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md relative m-2">
+      <div
+        className="bg-white shadow-md rounded-xl p-6 relative m-2 w-[375px]"
+        style={{ minHeight: "calc(100vh - 30px)" }}
+      >
         <h2 className="text-2xl font-bold mb-4 text-center">Profile</h2>
         <div>
           <img
-            className="w-[100px] h-[100px] rounded-full border-2 border-orange-500 p-[1px] mx-auto"
+            className="w-[100px] h-[100px] rounded-full border-2 border-blue-500 p-[1px] mx-auto"
             src={user.profile_picture || assets.default_profile}
             alt=""
           />
@@ -64,7 +67,7 @@ const StaffProfile = () => {
         </form>
 
         <Link to="/">
-          <button className="mt-4 flex items-center gap-2 text-white w-fit px-2 py-2 bg-red-500 hover:bg-orange-600 border border-white rounded-xl top-0 left-4 fixed">
+          <button className="mt-6 flex items-center gap-2 text-white w-fit px-2 py-2 bg-red-500 hover:bg-orange-600 border border-white rounded-xl top-0 left-4 fixed">
             <MdOutlineArrowBackIos />
           </button>
         </Link>

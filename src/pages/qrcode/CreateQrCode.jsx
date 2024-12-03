@@ -18,7 +18,7 @@ const CreateQrCode = () => {
       if (result.status === "success") {
         notify("Create successfully", "success");
       } else {
-        notify("Create fail!", "error");
+        notify(`${result.error.message}`, "error");
       }
       console.log("Created item:", result);
     } catch (error) {

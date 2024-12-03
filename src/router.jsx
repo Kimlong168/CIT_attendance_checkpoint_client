@@ -35,10 +35,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <PrivateRoute
-        roles={["admin", "manager", "cashier", "inventoryStaff"]}
-        element={Home}
-      />
+      <PrivateRoute roles={["admin", "manager", "user"]} element={Home} />
     ),
   },
 
@@ -113,31 +110,16 @@ const router = createBrowserRouter([
 
   {
     path: "/user/profile",
-    element: (
-      <PrivateRoute
-        roles={["cashier", "inventoryStaff"]}
-        element={StaffProfile}
-      />
-    ),
+    element: <PrivateRoute roles={["user"]} element={StaffProfile} />,
   },
   {
     path: "/user/leaveRequest",
-    element: (
-      <PrivateRoute
-        roles={["cashier", "inventoryStaff"]}
-        element={CrudLeaveRequest}
-      />
-    ),
+    element: <PrivateRoute roles={["user"]} element={CrudLeaveRequest} />,
   },
 
   {
     path: "/user/attendance",
-    element: (
-      <PrivateRoute
-        roles={["cashier", "inventoryStaff"]}
-        element={CheckInCheckOut}
-      />
-    ),
+    element: <PrivateRoute roles={["user"]} element={CheckInCheckOut} />,
   },
 
   {

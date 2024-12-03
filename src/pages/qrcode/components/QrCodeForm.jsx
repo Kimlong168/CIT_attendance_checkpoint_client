@@ -1,106 +1,53 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { notify } from "../../../utils/toastify";
 import PropTypes from "prop-types";
 import RedStar from "../../../components/ui/RedStar";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  useMap,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import axios from "axios";
-const LocationMarker = ({ setPosition, setData }) => {
-  useMapEvents({
-    click(e) {
-      const { lat, lng } = e.latlng;
-      setPosition([lat, lng]); // Update position with the clicked latitude and longitude
-      setData((prevData) => ({
-        ...prevData,
-        lat: lat,
-        lng: lng,
-      }));
-    },
-  });
-  return null;
-};
-
-const ChangeMapView = ({ center }) => {
-  const map = useMap();
-  useEffect(() => {
-    map.setView(center);
-  }, [center, map]);
-  return null;
-};
+import { useGetCurrentIp } from "@/hooks/qrcode/useQrcode";
 
 const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
+  const { data: currentIp } = useGetCurrentIp();
   const [data, setData] = useState({
     location: initialData.location || "",
-    lat: initialData.lat || "",
-    lng: initialData.lng || "",
-    radius: initialData.radius || "",
+    workStartTime: initialData.workStartTime || "",
+    workEndTime: initialData.workEndTime || "",
+    allowedNetworkRanges: initialData.allowedNetworkRanges || [
+      {
+        wifiName: "",
+        ip: "",
+      },
+    ],
   });
-  const [position, setPosition] = useState(
-    initialData.lat
-      ? [initialData.lat, initialData.lng]
-      : [12.753945580251552, 104.92383340997381]
-  ); // Default coordinates
-  const [searchTerm, setSearchTerm] = useState(""); // For search input
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    // const url = `https://nominatim.openstreetmap.org/search?q=${searchTerm}&format=json&limit=1`;
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
-      searchTerm + "*"
-    )}, Cambodia&format=json&limit=5`;
-
-    try {
-      const response = await axios.get(url);
-      if (response.data.length > 0) {
-        const { lat, lon } = response.data[0]; // Get lat and lon from the first result
-        setPosition([parseFloat(lat), parseFloat(lon)]); // Update the map position
-        setData((prevData) => ({
-          ...prevData,
-          lat: parseFloat(lat),
-          lng: parseFloat(lon),
-        })); // Update the form data
-      } else {
-        console.log("No results found for the location.");
-        notify("No results found for the location.", "error");
-      }
-    } catch (error) {
-      console.error("Error fetching location data:", error);
-    }
+  // Handle change in input fields
+  const handleChangeNetworkRanges = (index, e) => {
+    const newAllowedNetworkRanges = [...data.allowedNetworkRanges];
+    newAllowedNetworkRanges[index][e.target.name] = e.target.value;
+    setData((prevData) => ({
+      ...prevData,
+      allowedNetworkRanges: newAllowedNetworkRanges,
+    }));
   };
 
-  // get current location
-  const getCurrentPosition = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPosition([position.coords.latitude, position.coords.longitude]);
-          setData((prevData) => ({
-            ...prevData,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }));
+  // Handle adding new empty object in allowedNetworkRanges array
+  const handleAdd = () => {
+    setData((prevData) => ({
+      ...prevData,
+      allowedNetworkRanges: [
+        ...prevData.allowedNetworkRanges,
+        { wifiName: "", ip: "" },
+      ],
+    }));
+  };
 
-          // Stop watching after successful check-out
-          // navigator.geolocation.clearWatch(watchId);
-        },
-        (err) => {
-          notify(`ERROR(${err.code}): ${err.message}`, "error");
-        },
-        {
-          enableHighAccuracy: true, // Forces the use of GPS or a more accurate method
-          timeout: 30000, // Maximum time allowed to wait for a position (in milliseconds)
-          maximumAge: 0, // Don't accept a cached location
-        }
-      );
-    } else {
-      notify("Geolocation is not supported by this browser.", "error");
-    }
+  // Handle removing an item from allowedNetworkRanges
+  const handleRemove = (index) => {
+    const newAllowedNetworkRanges = data.allowedNetworkRanges.filter(
+      (_, i) => i !== index
+    );
+    setData((prevData) => ({
+      ...prevData,
+      allowedNetworkRanges: newAllowedNetworkRanges,
+    }));
   };
 
   const handleOnChange = (e) => {
@@ -115,10 +62,30 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!data.location || !data.lat || !data.lng || !data.radius) {
-      notify("Please fill all the fields!", "error");
+    if (
+      !data.location ||
+      !data.workStartTime ||
+      !data.workEndTime ||
+      data.allowedNetworkRanges.length === 0
+    ) {
+      const message = !data.allowedNetworkRanges.length
+        ? "Allowed Network Ranges must not be empty."
+        : "Please fill all the fields!";
+      notify(message, "error");
       return;
     }
+
+    // make sure all allowedNetworkRanges are filled
+    for (let i = 0; i < data.allowedNetworkRanges.length; i++) {
+      if (
+        !data.allowedNetworkRanges[i].wifiName ||
+        !data.allowedNetworkRanges[i].ip
+      ) {
+        notify("Please fill all the fields!", "error");
+        return;
+      }
+    }
+
     onSubmitFn(data);
   };
 
@@ -139,87 +106,92 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
         />
       </div>
 
+      {/* work time */}
       <div className="flex items-center gap-3">
         <div className="flex flex-col gap-2 w-full">
           <label className="font-medium text-sm">
-            Lat <RedStar />
+            Work Start Time <RedStar />
           </label>
           <input
-            type="text"
-            name="lat"
-            value={data.lat}
+            type="time"
+            name="workStartTime"
+            value={data.workStartTime}
             onChange={handleOnChange}
             className="border p-2 rounded focus:outline-orange-500"
           />
         </div>{" "}
         <div className="flex flex-col gap-2 w-full">
           <label className="font-medium text-sm">
-            Lng <RedStar />
+            Work End Time <RedStar />
           </label>
           <input
-            type="text"
-            name="lng"
-            value={data.lng}
+            type="time"
+            name="workEndTime"
+            value={data.workEndTime}
             onChange={handleOnChange}
             className="border p-2 rounded focus:outline-orange-500"
           />
         </div>{" "}
-        <div className="flex flex-col gap-2 w-full">
-          <label className="font-medium text-sm">
-            Radius <RedStar />
-          </label>
-          <input
-            type="text"
-            name="radius"
-            value={data.radius}
-            onChange={handleOnChange}
-            className="border p-2 rounded focus:outline-orange-500"
-          />
-        </div>
       </div>
 
-      <div>
-        <div>
-          <h3>
-            Click on the map to get latitude and longitude or{" "}
-            <button
-              className=" cursor-pointer bg-red-500 p-3 text-white rounded"
-              onClick={getCurrentPosition}
-            >
-              get your current location
-            </button>
-            :
-          </h3>
-          <form onSubmit={handleSearch}>
-            <input
-              className="border p-2 rounded focus:outline-orange-500 my-2"
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search location"
-            />
-            <button
-              type="submit"
-              className="border p-2 rounded bg-green-500 hover:bg-green-600 text-white my-2"
-            >
-              Search
-            </button>
-          </form>
-          <MapContainer
-            center={position}
-            zoom={12}
-            style={{ height: "400px", width: "100%" }}
-            scrollWheelZoom={true}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <Marker position={position} />
-            <LocationMarker setPosition={setPosition} setData={setData} />
-            <ChangeMapView center={position} />
-          </MapContainer>
-        </div>
+      {/* allowed network ranges */}
+      <div className="space-y-4">
+        {data.allowedNetworkRanges.map((networkRange, index) => (
+          <div key={index} className="p-4 border rounded-md shadow-sm bg-white">
+            {currentIp ? "Your current IP: " + currentIp.userIp : ""}
+            <div className="flex gap-4 mb-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  Wi-Fi Name
+                  <RedStar />
+                </label>
+                <input
+                  type="text"
+                  name="wifiName"
+                  value={networkRange.wifiName}
+                  onChange={(e) => handleChangeNetworkRanges(index, e)}
+                  placeholder="Enter Wi-Fi name"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700">
+                  IP Address
+                  <RedStar />
+                </label>
+                <input
+                  type="text"
+                  name="ip"
+                  value={networkRange.ip}
+                  onChange={(e) => handleChangeNetworkRanges(index, e)}
+                  placeholder="Enter IP address"
+                  className="mt-1 p-2 w-full border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+            </div>
+
+            {data.allowedNetworkRanges.length > 1 && (
+              <button
+                type="button"
+                onClick={() => handleRemove(index)}
+                className="mt-2 text-sm text-red-600 hover:text-red-800 focus:outline-none"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={handleAdd}
+          className="mt-4 py-2 px-4 text-sm font-semibold text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Add Another Network
+        </button>
       </div>
 
       {/*create data button */}
@@ -240,12 +212,4 @@ QrCodeForm.propTypes = {
   initialData: PropTypes.object,
 };
 
-LocationMarker.propTypes = {
-  setPosition: PropTypes.func,
-  setData: PropTypes.func,
-};
-
-ChangeMapView.propTypes = {
-  center: PropTypes.array,
-};
 export default QrCodeForm;

@@ -81,3 +81,19 @@ export const useDeleteQrcode = () => {
     }
   );
 };
+
+export const useGetCurrentIp = () => {
+  return useQuery(
+    ["currentIp"],
+    async () => {
+      const response = await axiosClient.get(`/get-current-ip`);
+      return response.data;
+    },
+    {
+      select: (response) => {
+        const formatedData = response.data;
+        return formatedData;
+      },
+    }
+  );
+};

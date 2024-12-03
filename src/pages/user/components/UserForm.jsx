@@ -108,8 +108,7 @@ const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
           <option value="">Select Role</option>
           <option value="admin">Admin</option>
           <option value="manager">Manager</option>
-          <option value="cashier">Cashier</option>
-          <option value="inventoryStaff">Inventory Staff</option>
+          <option value="user">User</option>
         </select>
       </div>
 
