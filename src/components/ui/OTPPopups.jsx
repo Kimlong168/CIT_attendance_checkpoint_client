@@ -29,7 +29,7 @@ const OTPPopups = ({
   }, [isOTPOpen]);
 
   return (
-    <div className="fixed inset-0  bg-black/70 z-[1000] flex justify-center items-center">
+    <div className="fixed inset-0  bg-gray-100 z-[1000] flex justify-center items-center">
       {/* Request OTP Popup */}
       {isOTPOpen.status && isOTPOpen.type === "request" && (
         <div

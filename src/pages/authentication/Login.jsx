@@ -61,9 +61,9 @@ const Login = () => {
   };
 
   return (
-    <div className="relative bg-black/70 h-screen grid place-content-center">
+    <div className="relative bg-gray-100 h-screen grid place-content-center">
       <div className="flex justify-center items-center p-4">
-        <div className="bg-white w-[370px] py-6 px-7 rounded-lg">
+        <div className="bg-white shadow-lg w-[370px] py-6 px-7 rounded-lg">
           <div>
             <img
               width={100}

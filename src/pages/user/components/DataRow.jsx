@@ -15,7 +15,7 @@ export const renderRows = (item, index, handleDelete) => {
           <PopupImage image={item.profile_picture || assets.default_profile} />
         </td>
         <td className="px-4 py-3 min-w-[250px]">{item.name}</td>
-        <td className="px-4 py-3 min-w-[250px] line-clamp-2 hover:line-clamp-none">
+        <td className="px-4 py-3 min-w-[250px]">
           {item.email}
         </td>
 

@@ -9,9 +9,11 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { logout } from "@/hooks/authentication/useAuth";
 import { notify } from "@/utils/toastify";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+
 const Home = () => {
   const { user, setUser } = useContext(AuthContext);
   const [isCheckIn, setIsCheckIn] = useState(null);
+  const [isCheckOut, setIsCheckOut] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { data: attendances } = useAttendancesByEmployeeId(user._id);
   const navigate = useNavigate();
@@ -21,6 +23,11 @@ const Home = () => {
         ? attendances.find((att) => isSameDate(att.time_in, new Date()))
         : null;
 
+      const isCheckedOutToday = attendances
+        ? attendances.find((att) => isSameDate(att.time_out, new Date()))
+        : null;
+
+      setIsCheckOut(isCheckedOutToday);
       setIsCheckIn(isCheckedInToday);
     }
   }, [attendances]);
@@ -59,7 +66,7 @@ const Home = () => {
                   size={28}
                 />
               </div>
-              <Link to="/user/profile">
+              <Link to={user.role == "user" ? "/user/profile" : "/profile"}>
                 <img
                   src={user.profile_picture || assets.default_profile}
                   className="rounded-full w-[40px] h-[40px] object-cover border border-black"
@@ -84,18 +91,34 @@ const Home = () => {
             <small className="text-white mt-3">
               Welcome back, <span>{user.name}</span>
             </small>
-            <Link to="/user/attendance">
-              <button className="text-white mt-4 py-2 px-3 rounded-full  border-2 border-white">
-                {isCheckIn ? "Check-out now" : "Check-in now"}
-              </button>
-            </Link>
+            {user.role == "user" ? (
+              <Link to="/user/attendance">
+                <button className="text-white mt-4 py-2 px-3 rounded-full  border-2 border-white">
+                  {isCheckIn
+                    ? isCheckOut
+                      ? "View attendance"
+                      : "Check-out now"
+                    : "Check-in now"}
+                </button>
+              </Link>
+            ) : (
+              <div>
+                <Link to="/dashboard">
+                  <button className="text-white mt-4 py-2 px-3 rounded-full  border-2 border-white">
+                    Dashboard
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Options */}
           <div className="space-y-3">
             {/* Attendance */}
             <div>
-              <Link to="/user/attendance">
+              <Link
+                to={user.role == "user" ? "/user/attendance" : "/attendance"}
+              >
                 <div className="flex justify-between items-center text-gray p-2 border rounded-lg shadow">
                   <div className="flex items-center space-x-3">
                     <div className="bg-orange-200 p-2 rounded-full">
@@ -104,7 +127,9 @@ const Home = () => {
                     <div>
                       <h3 className="font-semibold">Attendance</h3>
                       <p className="text-sm text-gray-500">
-                        History and check in/out
+                        {user.role == "user"
+                          ? "Check-in and check-out"
+                          : "View attendance records"}
                       </p>
                     </div>
                   </div>
@@ -115,7 +140,11 @@ const Home = () => {
             </div>
             {/* Leave */}
             <div>
-              <Link to="/user/leaveRequest">
+              <Link
+                to={
+                  user.role == "user" ? "/user/leaveRequest" : "/leaveRequest"
+                }
+              >
                 <div className="flex justify-between items-center text-gray p-2 border rounded-lg shadow">
                   <div className="flex items-center space-x-3">
                     <div className="bg-green-200 p-2 rounded-full">
@@ -124,7 +153,9 @@ const Home = () => {
                     <div>
                       <h3 className="font-semibold">Leave</h3>
                       <p className="text-sm text-gray-500">
-                        History and request leave
+                        {user.role == "user"
+                          ? "Request for leave"
+                          : "Approve or reject requests"}
                       </p>
                     </div>
                   </div>

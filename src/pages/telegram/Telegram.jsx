@@ -172,7 +172,7 @@ const Telegram = () => {
     <div className="text-gray-900  border-gray-700 rounded shadow-xl p-4">
       {/* title */}
       <div className="flex items-center justify-between">
-        <span className="font-bold text-3xl underline text-orange-500 uppercase ">
+        <span className="font-bold text-xl sm:text-2xl md:text-3xl underline text-orange-500 uppercase">
           Send Telegram Message
         </span>
         <BackToPrevBtn />
@@ -199,7 +199,7 @@ const Telegram = () => {
       </div>
 
       <div>
-        <div className="flex gap-3 mt-3">
+        <div className="flex flex-col md:flex-row gap-3 mt-3">
           <div className="w-full flex flex-col gap-2">
             <label className="font-medium text-sm">
               Send To <RedStar />
@@ -236,7 +236,7 @@ const Telegram = () => {
               name="chat_id"
               value={telegramData.chat_id}
               onChange={handleOnChange}
-              className="border p-2 rounded focus:outline-orange-500"
+              className="border p-2 rounded focus:outline-orange-500 w-auto"
             />
           </div>
         </div>

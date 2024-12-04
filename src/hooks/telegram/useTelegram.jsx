@@ -33,7 +33,7 @@ export const useTelegramSendImageUrl = () => {
 
 export const useRequestOtp = () => {
   return useMutation(async (data) => {
-    const response = await axiosClient.post(`/telegram/request-otp`, data);
+    const response = await axiosClient.post(`/auth/request-otp`, data);
 
     return response.data;
   });
@@ -41,7 +41,7 @@ export const useRequestOtp = () => {
 
 export const useVerifyOtp = () => {
   return useMutation(async (data) => {
-    const response = await axiosClient.post(`/telegram/verify-otp`, data);
+    const response = await axiosClient.post(`/auth/verify-otp`, data);
 
     console.log("response verify otp", response);
 

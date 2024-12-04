@@ -31,7 +31,7 @@ const CreateQrCode = () => {
     <div className="text-gray-900  border-gray-700 rounded shadow-xl p-4">
       {/* title */}
       <div className="flex items-center justify-between">
-        <span className="font-bold text-3xl underline text-orange-500 uppercase ">
+        <span className="font-bold text-xl sm:text-2xl md:text-3xl underline text-orange-500 uppercase">
           Create Qrcode
         </span>
         <BackToPrevBtn />

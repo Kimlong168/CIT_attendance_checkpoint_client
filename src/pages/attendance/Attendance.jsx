@@ -212,7 +212,7 @@ const Attendance = () => {
         />
       </div>
 
-      <div className="flex flex-row gap-3 items-center w-full mb-5">
+      <div className="flex flex-col md:flex-row gap-3 md:items-center w-full mb-5">
         <div>
           <label>
             <span className="text-gray-700">Status</span>

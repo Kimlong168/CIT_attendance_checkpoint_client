@@ -22,7 +22,7 @@ import { notify } from "@/utils/toastify";
 import { useClearAllLeaveRequests } from "@/hooks/leaveRequest/useLeaveRequest";
 import { useNavigate } from "react-router-dom";
 const LeaveRequest = () => {
-  const { data, isLoading , isError} = useLeaveRequests();
+  const { data, isLoading, isError } = useLeaveRequests();
   const { data: users, isLoading: isUserLoading } = useUsers();
   const clearAllLeaveRequests = useClearAllLeaveRequests();
   const {
@@ -181,10 +181,9 @@ const LeaveRequest = () => {
     };
   });
 
-  if(isError){
-    return <div>Error...</div>
+  if (isError) {
+    return <div>Error...</div>;
   }
-
 
   return (
     <div>
@@ -195,158 +194,160 @@ const LeaveRequest = () => {
       />
 
       {/* search and filter */}
-      <div className="flex flex-col md:flex-row items-center gap-5 py-5 ">
-        <SelectNumberPerPage
-          setNumberOfRecordsPerPage={setNumberOfRecordsPerPage}
-          numberOfRecordsPerPage={numberOfRecordsPerPage}
-          maxLength={leaveRequests?.length}
-        />
 
-        <SearchBar
-          handleSearch={handleSearch}
-          setSearchKeyWord={setSearchKeyWord}
-          searchKeyWord={searchKeyWord}
-        />
-      </div>
-      <div className="flex flex-row gap-3 items-center w-full mb-5">
-        <div>
-          <label>
-            <span className="text-gray-700">Status</span>
-          </label>
-          <SelectFilter
-            handleFilter={handleFilterByStatus}
-            filterName={"status"}
-            options={[
-              {
-                value: "all",
-                label: "All",
-              },
-              {
-                value: "Approved",
-                label: "Approved",
-              },
-              {
-                value: "Rejected",
-                label: "Rejected",
-              },
-              {
-                value: "Pending",
-                label: "Pending",
-              },
-            ]}
+        <div className="flex flex-col md:flex-row md:items-center gap-5 py-5 ">
+          <SelectNumberPerPage
+            setNumberOfRecordsPerPage={setNumberOfRecordsPerPage}
+            numberOfRecordsPerPage={numberOfRecordsPerPage}
+            maxLength={leaveRequests?.length}
+          />
+
+          <SearchBar
+            handleSearch={handleSearch}
+            setSearchKeyWord={setSearchKeyWord}
+            searchKeyWord={searchKeyWord}
           />
         </div>
-        <div>
-          <label>
-            <span className="text-gray-700">Number of Status</span>
-          </label>
-          <div className="flex items-center gap-2">
-            <div className="bg-orange-500/20 border-orange-500 text-orange-500 px-2  rounded w-[120px] text-center border p-2">
-              Pending:{" "}
-              {leaveRequests.filter((item) => item.status === "Pending")
-                .length || "0"}
-            </div>
-            <div className="bg-green-600/20 border-green-600 text-green-600 px-2  rounded w-[120px] text-center border p-2">
-              Approved:{" "}
-              {leaveRequests.filter((item) => item.status === "Approved")
-                .length || "0"}
-            </div>
-            <div className="bg-red-500/20 border-red-500 text-red-500 px-2  rounded w-[120px] text-center border p-2">
-              Rejected:{" "}
-              {leaveRequests.filter((item) => item.status === "Rejected")
-                .length || "0"}
-            </div>
-          </div>
-        </div>
-        {!isUserLoading && (
+        <div className="flex flex-col md:flex-row md:items-center gap-3 w-full mb-5">
           <div>
             <label>
-              <span className="text-gray-700">Employee</span>
+              <span className="text-gray-700">Status</span>
             </label>
             <SelectFilter
-              handleFilter={handleFilterByEmployee}
-              filterName={"employee"}
+              handleFilter={handleFilterByStatus}
+              filterName={"status"}
               options={[
                 {
                   value: "all",
                   label: "All",
                 },
-                ...users
-                  .filter(
-                    (user) => user.role !== "admin" && user.role !== "manager"
-                  )
-                  .map((user) => ({
-                    value: user._id,
-                    label: user.name,
-                  })),
+                {
+                  value: "Approved",
+                  label: "Approved",
+                },
+                {
+                  value: "Rejected",
+                  label: "Rejected",
+                },
+                {
+                  value: "Pending",
+                  label: "Pending",
+                },
               ]}
             />
           </div>
-        )}
-        <div>
-          <label>
-            <span className="text-gray-700">Request Date</span>
-          </label>
-          <SelectFilter
-            handleFilter={handleFilterByDate}
-            filterName={"date"}
-            options={[
-              {
-                value: "all",
-                label: "All",
-              },
-              {
-                value: "today",
-                label: "Today",
-              },
-              {
-                value: "yesterday",
-                label: "Yesterday",
-              },
-              {
-                value: "this_week",
-                label: "This Week",
-              },
-              {
-                value: "last_week",
-                label: "Last Week",
-              },
-              {
-                value: "this_month",
-                label: "This Month",
-              },
-              {
-                value: "last_month",
-                label: "Last Month",
-              },
-            ]}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="">Export to</label>
-          <div className="flex gap-2 w-full">
-            <ExportToExcel
-              data={dataToExport}
-              fileName={`Leave_request_${new Date().toLocaleDateString()}`}
-            />
-            <ExportToPDF
-              data={dataToExport}
-              fileName={`Leave_request_${new Date().toLocaleDateString()}`}
+          <div>
+            <label>
+              <span className="text-gray-700">Number of Status</span>
+            </label>
+            <div className="flex items-center gap-2">
+              <div className="bg-orange-500/20 border-orange-500 text-orange-500 px-2  rounded w-[120px] text-center border p-2">
+                Pending:{" "}
+                {leaveRequests.filter((item) => item.status === "Pending")
+                  .length || "0"}
+              </div>
+              <div className="bg-green-600/20 border-green-600 text-green-600 px-2  rounded w-[120px] text-center border p-2">
+                Approved:{" "}
+                {leaveRequests.filter((item) => item.status === "Approved")
+                  .length || "0"}
+              </div>
+              <div className="bg-red-500/20 border-red-500 text-red-500 px-2  rounded w-[120px] text-center border p-2">
+                Rejected:{" "}
+                {leaveRequests.filter((item) => item.status === "Rejected")
+                  .length || "0"}
+              </div>
+            </div>
+          </div>
+          {!isUserLoading && (
+            <div>
+              <label>
+                <span className="text-gray-700">Employee</span>
+              </label>
+              <SelectFilter
+                handleFilter={handleFilterByEmployee}
+                filterName={"employee"}
+                options={[
+                  {
+                    value: "all",
+                    label: "All",
+                  },
+                  ...users
+                    .filter(
+                      (user) => user.role !== "admin" && user.role !== "manager"
+                    )
+                    .map((user) => ({
+                      value: user._id,
+                      label: user.name,
+                    })),
+                ]}
+              />
+            </div>
+          )}
+          <div>
+            <label>
+              <span className="text-gray-700">Request Date</span>
+            </label>
+            <SelectFilter
+              handleFilter={handleFilterByDate}
+              filterName={"date"}
+              options={[
+                {
+                  value: "all",
+                  label: "All",
+                },
+                {
+                  value: "today",
+                  label: "Today",
+                },
+                {
+                  value: "yesterday",
+                  label: "Yesterday",
+                },
+                {
+                  value: "this_week",
+                  label: "This Week",
+                },
+                {
+                  value: "last_week",
+                  label: "Last Week",
+                },
+                {
+                  value: "this_month",
+                  label: "This Month",
+                },
+                {
+                  value: "last_month",
+                  label: "Last Month",
+                },
+              ]}
             />
           </div>
-        </div>
 
-        <div>
-          <label>Clear all (expired only)</label>
-          <div
-            onClick={handleClearAll}
-            className="w-fit cursor-pointer bg-red-500 hover:bg-red-600 p-2 rounded text-white"
-          >
-            Clear all Now☢️
+          <div>
+            <label htmlFor="">Export to</label>
+            <div className="flex gap-2 w-full">
+              <ExportToExcel
+                data={dataToExport}
+                fileName={`Leave_request_${new Date().toLocaleDateString()}`}
+              />
+              <ExportToPDF
+                data={dataToExport}
+                fileName={`Leave_request_${new Date().toLocaleDateString()}`}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label>Clear all (expired only)</label>
+            <div
+              onClick={handleClearAll}
+              className="w-fit cursor-pointer bg-red-500 hover:bg-red-600 p-2 rounded text-white"
+            >
+              Clear all Now☢️
+            </div>
           </div>
         </div>
-      </div>
+     
 
       {/* Table */}
       <Table>

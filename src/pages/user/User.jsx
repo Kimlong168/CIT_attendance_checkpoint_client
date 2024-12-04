@@ -100,7 +100,7 @@ const User = () => {
           />
         </div>
         <div className="flex flex-row gap-3 items-center w-full">
-          <div>
+          <div className="w-full md:w-fit">
             <label>
               <span className="text-gray-700">Role</span>
             </label>

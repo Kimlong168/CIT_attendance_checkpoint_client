@@ -142,7 +142,10 @@ const AdminLayout = () => {
               <Link to="/">
                 {/* <img width={60} src={assets.logo} alt="logo" />
                  */}
-                CIT Attendance Checkpoint
+                <span className="hidden lg:block">
+                  CIT Attendance Checkpoint
+                </span>
+                <span className="lg:hidden">CIT</span>
               </Link>
             </div>
           </div>
