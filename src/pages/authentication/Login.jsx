@@ -121,6 +121,7 @@ const Login = () => {
                 type="checkbox"
                 name="isCheck"
                 className="cursor-pointer"
+                defaultChecked={credentials.isCheck} // defaultChecked
               />
               <span className="text-xs text-gray-500">
                 By continuing, you agree to accept our Privacy Policy & Terms of
