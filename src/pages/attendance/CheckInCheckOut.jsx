@@ -241,7 +241,7 @@ const CheckInCheckOut = () => {
   return (
     <div>
       <div
-        className={`flex justify-center items-center relative bg-gray-100 min-h-screen`}
+        className={`flex justify-center items-center relative bg-gray-100 min-h-screen overflow-x-hidden`}
       >
         <div
           className="bg-white shadow-md rounded-xl p-6 w-[375px] relative m-2"

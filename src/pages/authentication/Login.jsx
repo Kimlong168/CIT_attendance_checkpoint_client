@@ -12,7 +12,7 @@ const Login = () => {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
-    isCheck: false,
+    isCheck: true,
   });
   const navigate = useNavigate();
 
