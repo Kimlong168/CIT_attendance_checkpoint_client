@@ -72,12 +72,13 @@ export const AuthProvider = ({ children }) => {
       error: result.error,
     };
   };
+
   // refresh token
   useEffect(() => {
     if (user) {
       const interval = setInterval(() => {
         apiRefreshToken();
-      }, 15 * 60 * 1000); // refresh every 15 minute
+      }, 30 * 60 * 1000); // refresh every 30 minutes
 
       return () => clearInterval(interval);
     }

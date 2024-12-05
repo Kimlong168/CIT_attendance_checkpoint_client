@@ -97,16 +97,6 @@ const AdminLayout = () => {
       pathName: "/dashboard",
     },
     {
-      tabName: "user",
-      icon: <FaRegUser />,
-      pathName: user.role === "admin" ? "/user" : "#",
-    },
-    {
-      tabName: "Qr-Code",
-      icon: <FaQrcode />,
-      pathName: "/qrcode",
-    },
-    {
       tabName: "Attendance",
       icon: <LuClipboardList />,
       pathName: "/attendance",
@@ -116,6 +106,17 @@ const AdminLayout = () => {
       icon: <VscGitPullRequestGoToChanges />,
       pathName: "/leaveRequest",
     },
+    {
+      tabName: "user",
+      icon: <FaRegUser />,
+      pathName: user.role === "admin" ? "/user" : "#",
+    },
+    {
+      tabName: "Qr-Code",
+      icon: <FaQrcode />,
+      pathName: "/qrcode",
+    },
+
     {
       tabName: "Telegram",
       icon: <FaTelegramPlane />,

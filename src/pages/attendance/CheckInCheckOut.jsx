@@ -86,7 +86,7 @@ const CheckInCheckOut = () => {
       console.warn("error");
       // notify("Error", "error");
     }
-  }, [attendances]);
+  }, [attendances, scannerResult]);
 
   // handle check in
   const handleCheckIn = async (event) => {
@@ -130,7 +130,7 @@ const CheckInCheckOut = () => {
 
         navigate("/user/attendance");
       } else {
-        notify(isSuccess.error.message, "info");
+        notify(isSuccess.error.message, "error");
         setScannerResult(null);
       }
     } catch (error) {
@@ -206,7 +206,7 @@ const CheckInCheckOut = () => {
       }
 
       if (isSuccess.status === "error") {
-        notify(isSuccess.error.message, "info");
+        notify(isSuccess.error.message, "error");
         setScannerResult(null);
       }
     } catch (error) {

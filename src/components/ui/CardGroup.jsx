@@ -20,6 +20,13 @@ const CardGroup = ({ itemNumber }) => {
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         <Card
+          title="Leave Request"
+          subtitle="Approve or Reject leave request"
+          href="/leaveRequest"
+          Icon={VscGitPullRequestGoToChanges}
+          numberOfItem={itemNumber?.mail}
+        />
+        <Card
           title="User"
           subtitle="Manage users"
           href="/user"
@@ -32,14 +39,6 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="Manage qr-code"
           href="/qrcode"
           Icon={FaQrcode}
-          numberOfItem={itemNumber?.mail}
-        />
-
-        <Card
-          title="Leave Request"
-          subtitle="Approve or Reject leave request"
-          href="/leaveRequest"
-          Icon={VscGitPullRequestGoToChanges}
           numberOfItem={itemNumber?.mail}
         />
 

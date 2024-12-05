@@ -3,6 +3,7 @@ import { notify } from "../../../utils/toastify";
 import PropTypes from "prop-types";
 import RedStar from "../../../components/ui/RedStar";
 import { useGetCurrentIp } from "@/hooks/qrcode/useQrcode";
+import { CopyIcon } from "lucide-react";
 
 const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
   const { data: currentIp } = useGetCurrentIp();
@@ -89,6 +90,14 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
     onSubmitFn(data);
   };
 
+  const handleCopy = () => {
+    if (currentIp?.userIp) {
+      navigator.clipboard.writeText(currentIp.userIp).then(() => {
+        notify("IP address copied to clipboard!", "success");
+      });
+    }
+  };
+
   return (
     <div className="w-full flex flex-col  border border-white/50 rounded-3xl gap-3">
       {/* data title input */}
@@ -136,9 +145,21 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
 
       {/* allowed network ranges */}
       <div className="space-y-4">
+        <div className="my-3 font-bold text-blue-500">
+          {currentIp ? (
+            <span
+              className="cursor-pointer flex items-center gap-2"
+              onClick={handleCopy}
+              title="Click to copy"
+            >
+              <CopyIcon size={20} /> Your wifi current IP: {currentIp.userIp}
+            </span>
+          ) : (
+            ""
+          )}
+        </div>
         {data.allowedNetworkRanges.map((networkRange, index) => (
           <div key={index} className="p-4 border rounded-md shadow-sm bg-white">
-            {currentIp ? "Your current IP: " + currentIp.userIp : ""}
             <div className="flex gap-4 mb-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700">

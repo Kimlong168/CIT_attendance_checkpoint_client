@@ -98,9 +98,9 @@ const QrCode = () => {
           theads={[
             "No",
             "Location",
-            "Lat",
-            "Lng",
-            "Radius",
+            "Time In",
+            "Time Out",
+            "Wifi Name",
             "Qrcode",
             "Action",
           ]}

@@ -1,41 +1,3 @@
-export const emailTemplates = [
-  {
-    type: "Employee Work Assignment Confirmation",
-    subject: "Confirmation of New Work Assignment",
-    body: `
-        <p>Dear [Employee's Name],</p>
-        <p>I hope this email finds you well.</p>
-        <p>This is to confirm that you have been assigned the responsibility of <strong>[Project/Task Name]</strong>, effective from <strong>[Start Date]</strong>. Please ensure all deliverables are completed by <strong>[End Date]</strong>. You will be working closely with <strong>[Team Members/Supervisor's Name]</strong> on this task.</p>
-        <p>If you have any questions or need support, feel free to reach out.</p>
-        <p>Best regards,<br>Tomato Team</p>
-      `,
-  },
-  {
-    type: "Supplier Order Confirmation Request",
-    subject: "Request for Order Confirmation",
-    body: `
-        <p>Dear [Supplier's Name],</p>
-        <p>I hope you are doing well.</p>
-        <p>This is a follow-up regarding the recent order placed for <strong>[Product/Service Name]</strong>, reference number <strong>[Order Number]</strong>. We kindly request confirmation of the order details, including expected delivery dates and payment terms.</p>
-        <p>Please ensure all documentation is provided, and let us know if there are any changes or issues.</p>
-        <p>We appreciate your prompt response.</p>
-        <p>Best regards,<br>Tomato Team</p>
-      `,
-  },
-  {
-    type: "Supplier Payment Reminder",
-    subject: "Payment Reminder for Invoice #[Invoice Number]",
-    body: `
-        <p>Dear [Supplier's Name],</p>
-        <p>I hope this email finds you well.</p>
-        <p>This is a friendly reminder regarding the outstanding payment for invoice <strong>#[Invoice Number]</strong> dated <strong>[Invoice Date]</strong>, which was due on <strong>[Due Date]</strong>. Kindly process the payment at your earliest convenience.</p>
-        <p>Please let us know if you need any further details or have any questions regarding the invoice.</p>
-        <p>Thank you for your prompt attention to this matter.</p>
-        <p>Best regards,<br>Tomato Team</p>
-      `,
-  },
-];
-
 export const telegramMessageTemplate = [
   {
     type: "Employee Work Assignment Confirmation",
@@ -49,38 +11,82 @@ This is to confirm that you have been assigned the responsibility of [Project/Ta
 If you have any questions or need support, feel free to reach out.
 
 Best regards,
-Tomato Team`,
+[Manager's Name], CIT`,
   },
   {
-    type: "Supplier Order Confirmation Request",
-    subject: "Request for Order Confirmation",
-    body: `Dear [Supplier's Name],
+    type: "Employee Attendance Reminder",
+    subject: "Reminder: Attendance for [Date]",
+    body: `Dear [Employee's Name],
 
-I hope you are doing well.
+I hope you're doing well.
 
-This is a follow-up regarding the recent order placed for [Product/Service Name], reference number [Order Number]. We kindly request confirmation of the order details, including expected delivery dates and payment terms.
+This is a reminder that your attendance for today ([Date]) is being tracked. Please ensure that you mark your attendance on time. If you are unable to attend today, kindly inform us in advance.
 
-Please ensure all documentation is provided, and let us know if there are any changes or issues.
-
-We appreciate your prompt response.
+Thank you for your cooperation.
 
 Best regards,
-Tomato Team`,
+[Manager's Name], CIT`,
   },
   {
-    type: "Supplier Payment Reminder",
-    subject: "Payment Reminder for Invoice #[Invoice Number]",
-    body: `Dear [Supplier's Name],
+    type: "Employee Leave Request Confirmation",
+    subject: "Leave Request Confirmation",
+    body: `Dear [Employee's Name],
 
 I hope this message finds you well.
 
-This is a friendly reminder regarding the outstanding payment for invoice #[Invoice Number] dated [Invoice Date], which was due on [Due Date]. Kindly process the payment at your earliest convenience.
+Your leave request for [Leave Type] from [Start Date] to [End Date] has been received and is currently under review. We will notify you of the approval status shortly.
 
-Please let us know if you need any further details or have any questions regarding the invoice.
-
-Thank you for your prompt attention to this matter.
+If you have any questions or need further assistance, feel free to contact us.
 
 Best regards,
-Tomato Team`,
+[Manager's Name], CIT`,
+  },
+  {
+    type: "Employee Leave Request Approval",
+    subject: "Leave Request Approved",
+    body: `Dear [Employee's Name],
+
+We are pleased to inform you that your leave request for [Leave Type] from [Start Date] to [End Date] has been approved.
+
+Please make the necessary arrangements and let us know if you need any assistance in preparing for your leave.
+
+Best regards,
+[Manager's Name], CIT`,
+  },
+  {
+    type: "Employee Leave Request Denial",
+    subject: "Leave Request Denied",
+    body: `Dear [Employee's Name],
+
+Thank you for your leave request for [Leave Type] from [Start Date] to [End Date]. Unfortunately, we are unable to approve your request at this time due to [Reason].
+
+Please feel free to discuss alternative dates or any concerns with us.
+
+Best regards,
+[Manager's Name], CIT`,
+  },
+  {
+    type: "Employee Tardiness Notification",
+    subject: "Tardiness Alert: [Date]",
+    body: `Dear [Employee's Name],
+
+We noticed that you were late to work today ([Date]). Please make sure to report on time moving forward. Repeated tardiness may lead to further actions.
+
+If you have any issues or need support, let us know.
+
+Best regards,
+[Manager's Name], CIT`,
+  },
+  {
+    type: "Employee Overtime Notification",
+    subject: "Overtime Notification",
+    body: `Dear [Employee's Name],
+
+This is to notify you that you are requested to work overtime today ([Date]) from [Start Time] to [End Time]. Please confirm if you are available to accommodate this.
+
+Thank you for your dedication.
+
+Best regards,
+[Manager's Name], CIT`,
   },
 ];

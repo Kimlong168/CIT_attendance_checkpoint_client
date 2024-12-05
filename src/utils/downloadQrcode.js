@@ -7,7 +7,7 @@ const downloadQrcode = (qrcode) => {
     var a = document.createElement("a");
     a.href = canvas.toDataURL("image/png");
     console.log(a.href, "and", a);
-    a.download = `${qrcode.location}_${qrcode.radius}.png`;
+    a.download = `${qrcode.location}.png`;
     a.click();
   });
 };

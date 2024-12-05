@@ -42,7 +42,7 @@ const ForgetPassword = () => {
       });
 
       if (result.status === "success") {
-        notify("OTP sent successfully, Check your email!", "success");
+        notify("OTP sent successfully, Check your telegram!", "success");
         setIsOTPOpen({
           status: true,
           type: "verify",

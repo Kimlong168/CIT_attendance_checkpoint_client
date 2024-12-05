@@ -34,31 +34,6 @@ const Telegram = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // //   options to select
-  // const options = users?.map((user) => ({
-  //   name: user.name,
-  //   email: user.email,
-  //   id: user._id,
-  //   nameEmail: user.name + " (" + user.email + ")",
-  // }));
-
-  // //   handle select
-  // const handleOnSelect = (e) => {
-  //   console.log("e", e);
-  //   const selectedValue = e.map((state) => {
-  //     return {
-  //       name: state.name,
-  //       id: state.id,
-  //       email: state.email,
-  //       nameEmail: state.name + " (" + state.email + ")",
-  //     };
-  //   });
-  //   setTelegramData((prevtelegramData) => ({
-  //     ...prevtelegramData,
-  //     cc: selectedValue,
-  //   }));
-  // };
-
   const handleOnChange = (e) => {
     const { name, value } = e.target;
 
@@ -241,21 +216,6 @@ const Telegram = () => {
           </div>
         </div>
 
-        {/* <div className="w-full flex flex-col gap-2 mt-3">
-          <label className="font-medium text-sm">CC</label>
-          <Multiselect
-            selectedValues={telegramData.cc}
-            placeholder="Select CC (optional)"
-            className="rounded border"
-            options={options}
-            name="endStates"
-            displayValue="nameEmail"
-            showArrow={true}
-            onSelect={(e) => handleOnSelect(e)} // Function will trigger on select event
-            onRemove={(e) => handleOnSelect(e)} // Function will trigger on remove event
-          />
-        </div> */}
-
         <div className="mt-3">
           <label className="font-medium text-sm">Image(File)</label>
 
@@ -288,7 +248,7 @@ const Telegram = () => {
             name="message"
             value={telegramData.message}
             onChange={handleOnChange}
-            className="border p-2 rounded focus:outline-orange-500 block mt-1 w-full min-h-[150px]"
+            className="border p-2 rounded focus:outline-orange-500 block mt-1 w-full min-h-[300px]"
           >
             {telegramData.message}
           </textarea>
