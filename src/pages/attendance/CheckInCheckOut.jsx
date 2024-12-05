@@ -8,6 +8,7 @@ import {
   useCheckInAttendance,
   useCheckOutAttendance,
 } from "@/hooks/attendance/useAttendance";
+import { useQrcodes } from "@/hooks/qrcode/useQrcode";
 import {
   getFormattedDate,
   getFormattedTimeWithAMPM,
@@ -19,11 +20,13 @@ import { useContext, useEffect, useState } from "react";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
 import { MdOutlineArrowBackIos, MdOutlineCheckCircle } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
-const WORK_START_TIME = new Date().setHours(9, 0, 0); // 9:00 AM
-const WORK_END_TIME = new Date().setHours(17, 0, 0); // 5:00 PM
+// const WORK_START_TIME = new Date().setHours(8, 30, 0); // 8:30 AM
+// const WORK_END_TIME = new Date().setHours(17, 0, 0); // 5:00 PM
 // const IPINFO_API_KEY = import.meta.env.VITE_APP_IPINFO_API_KEY;
+
 const CheckInCheckOut = () => {
   const { user } = useContext(AuthContext);
+  const { data: qrCodes } = useQrcodes();
   const {
     data: attendances,
     isLoading,
@@ -97,6 +100,19 @@ const CheckInCheckOut = () => {
     let checkInStatus = "";
     let lateDuration = 0;
 
+    const qrcode = qrCodes?.find((qrcode) => qrcode._id === scannerResult);
+
+    if (!qrcode) {
+      return notify("Please try again, something went wrong!", "error");
+    }
+
+    const workStartTime = qrcode.workStartTime;
+
+    // Convert to Date objects
+    const [startHours, startMinutes] = workStartTime.split(":").map(Number);
+
+    const WORK_START_TIME = new Date().setHours(startHours, startMinutes, 0, 0);
+
     if (new Date(currentTime).getTime() <= WORK_START_TIME) {
       checkInStatus = "On Time";
     } else {
@@ -145,6 +161,19 @@ const CheckInCheckOut = () => {
     const currentTime = new Date();
     let checkOutStatus = "";
     let earlyDuration = 0;
+
+    const qrcode = qrCodes?.find(
+      (qrcode) => qrcode._id === isCheckIn.qr_code?._id
+    );
+
+    if (!qrcode) {
+      return notify("Please try again, something went wrong!", "error");
+    }
+
+    // Convert to Date objects
+    const workEndTime = qrcode.workEndTime;
+    const [endHours, endMinutes] = workEndTime.split(":").map(Number);
+    const WORK_END_TIME = new Date().setHours(endHours, endMinutes, 0, 0);
 
     // Assuming WORK_END_TIME is defined and represents the end of the workday
     if (new Date(currentTime).getTime() >= WORK_END_TIME) {
