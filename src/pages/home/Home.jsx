@@ -9,7 +9,7 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { logout } from "@/hooks/authentication/useAuth";
 import { notify } from "@/utils/toastify";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-
+const appVersion = import.meta.env.VITE_APP_VERSION || "1.0.0";
 const Home = () => {
   const { user, setUser } = useContext(AuthContext);
   const [isCheckIn, setIsCheckIn] = useState(null);
@@ -178,7 +178,7 @@ const Home = () => {
           </div> */}
           </div>
         </div>
-        <div className="text-center text-gray-600">Version 1.0.0</div>
+        <div className="text-center text-gray-600">Version {appVersion}</div>
       </div>
 
       <ConfirmModal

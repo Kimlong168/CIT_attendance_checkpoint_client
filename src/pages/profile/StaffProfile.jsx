@@ -53,13 +53,13 @@ const StaffProfile = () => {
 
           <div className="flex gap-2 w-full">
             <Link to="/user/attendance" className="w-full">
-              <button className="w-full text-white bg-green-600 hover:bg-green-700 px-3 py-2 border border-gray-300 rounded-md">
+              <button className="w-full h-full text-white bg-green-600 hover:bg-green-700 px-3 py-2 border border-gray-300 rounded-md">
                 Check Attendance
               </button>
             </Link>
 
             <Link to="/user/leaveRequest" className="w-full">
-              <button className="w-full text-white bg-blue-600 hover:bg-blue-700  px-3 py-2 border border-gray-300 rounded-md">
+              <button className="w-full h-full text-white bg-blue-600 hover:bg-blue-700  px-3 py-2 border border-gray-300 rounded-md">
                 Request Leave
               </button>
             </Link>
