@@ -111,8 +111,7 @@ const User = () => {
                 { value: "all", label: "All" },
                 { value: "admin", label: "Admin" },
                 { value: "manager", label: "Manager" },
-                { value: "inventoryStaff", label: "Inventory Staff" },
-                { value: "cashier", label: "Cashier" },
+                { value: "user", label: "User" },
               ]}
             />
           </div>

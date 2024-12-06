@@ -38,7 +38,6 @@ const ForgetPassword = () => {
     try {
       const result = await requestOtp.mutateAsync({
         email: user.email,
-        subject: "Request OTP",
       });
 
       if (result.status === "success") {
@@ -59,6 +58,7 @@ const ForgetPassword = () => {
     e.preventDefault();
     try {
       const result = await verifyOtp.mutateAsync({
+        email: user.email,
         otp: otp,
       });
 
