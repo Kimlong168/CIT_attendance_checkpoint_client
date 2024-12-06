@@ -62,6 +62,9 @@ const ForgetPassword = () => {
         otp: otp,
       });
 
+      console.log("emailll", user.email);
+      console.log("otppp", otp);
+
       if (result.status === "success") {
         notify("OTP verified successfully", "success");
         setIsOTPOpen({
