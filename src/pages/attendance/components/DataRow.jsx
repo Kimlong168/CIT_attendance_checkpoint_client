@@ -13,13 +13,30 @@ export const renderRows = (item, index, handleDelete) => {
         <td className="px-4 py-3">{index + 1}</td>
         <td className="px-4 py-3 min-w-[250px]">{item.employee?.name}</td>
         <td className="px-4 py-3 min-w-[250px]">
-          {getFormattedTimeWithAMPM(item.time_in)} ({item.check_in_status})
+          {getFormattedTimeWithAMPM(item.time_in)}{" "}
+          <span
+            className={
+              item.check_in_status == "On Time"
+                ? "text-green-600"
+                : "text-red-500"
+            }
+          >
+            ({item.check_in_status})
+          </span>
         </td>
         <td className="px-4 py-3 min-w-[250px]">
           {item.check_out_status ? (
             <>
-              {item.time_out ? getFormattedTimeWithAMPM(item.time_out) : ""} (
-              {item.check_out_status})
+              {item.time_out ? getFormattedTimeWithAMPM(item.time_out) : ""}{" "}
+              <span
+                className={
+                  item.check_out_status == "Checked Out"
+                    ? "text-green-600"
+                    : "text-red-500"
+                }
+              >
+                ({item.check_out_status})
+              </span>
             </>
           ) : (
             "Not Yet"

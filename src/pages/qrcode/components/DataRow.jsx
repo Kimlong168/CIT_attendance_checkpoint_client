@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import QRCode from "react-qr-code";
 import { MdCloudDownload } from "react-icons/md";
+
 import downloadQrcode from "@/utils/downloadQrcode";
 
 const url = import.meta.env.VITE_APP_BASE_URL + "/user/attendance?att=";
@@ -43,7 +44,7 @@ export const renderRows = (item, index, handleDelete) => {
           <div className=" flex items-center gap-2">
             <div
               onClick={() => downloadQrcode(item)}
-              className="grid place-content-center rounded bg-blue-400 text-white w-7 h-7 cursor-pointer"
+              className="grid place-content-center rounded bg-blue-500 text-white w-7 h-7 cursor-pointer"
             >
               <MdCloudDownload />
             </div>

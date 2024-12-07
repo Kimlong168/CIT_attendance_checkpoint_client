@@ -4,6 +4,7 @@ import { useResetPassword } from "../../hooks/user/useUser";
 import { useRequestOtp, useVerifyOtp } from "../../hooks/telegram/useTelegram";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 const ForgetPassword = () => {
   const [user, setUser] = useState({
     name: "User",
@@ -62,9 +63,6 @@ const ForgetPassword = () => {
         otp: otp,
       });
 
-      console.log("emailll", user.email);
-      console.log("otppp", otp);
-
       if (result.status === "success") {
         notify("OTP verified successfully", "success");
         setIsOTPOpen({
@@ -118,6 +116,7 @@ const ForgetPassword = () => {
       notify("Password reset fail", "error");
     }
   };
+  
   return (
     <div>
       <OTPPopups

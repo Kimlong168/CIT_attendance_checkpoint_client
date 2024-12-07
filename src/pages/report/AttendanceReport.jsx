@@ -6,6 +6,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import { PiDownloadBold } from "react-icons/pi";
+import { RiNumbersFill } from "react-icons/ri";
+import { TbMessageReport } from "react-icons/tb";
+
 import html2canvas from "html2canvas";
 
 import {
@@ -19,6 +22,7 @@ import TotalNormalCheckOutByEmployee from "@/components/chart/TotalNormalCheckOu
 import TotalMissedCheckOutByEmployee from "@/components/chart/TotalMissedCheckOutByEmployee";
 import TotalLateByEmployee from "@/components/chart/TotalLateByEmployee";
 import TotalEarlyCheckOutByEmployee from "@/components/chart/TotalEarlyCheckOutByEmployee";
+import NumberCard from "@/components/ui/NumberCard";
 
 const AttendanceReport = () => {
   const [date, setDate] = useState(new Date());
@@ -73,10 +77,10 @@ const AttendanceReport = () => {
   }
   return (
     <div>
-      <div className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center mb-4">
+      <div className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center mb-4 px-3">
         <div className="flex gap-5">
           <div className="flex items-center w-full">
-            <label className="mr-2 truncate w-full">Select Date:</label>
+            <label className="mr-2 truncate w-full hidden md:block">Select Date:</label>
 
             <input
               className="block w-full p-2 border border-gray-300 rounded-md"
@@ -87,7 +91,7 @@ const AttendanceReport = () => {
           </div>
           <div className="w-full">
             <button
-              className="p-2 rounded border border-gray-300 text-white bg-green-600"
+              className="p-2 rounded border border-gray-300 text-white bg-orange-500"
               onClick={() => setDate(new Date())}
             >
               Today
@@ -98,226 +102,257 @@ const AttendanceReport = () => {
         <div>
           <button
             onClick={() => handleCapture("table")}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
           >
             Download <PiDownloadBold />
           </button>
         </div>
       </div>
-      <div ref={captureTableRef}>
+      <div ref={captureTableRef} className="p-3">
         {date && (
           <div>
-            <h3 className="text-xl">Date : {getFormattedDate(date)}</h3>
+            <h3 className="w-full text-xl text-orange-500 bg-orange-500/10 p-3 rounded-lg md:w-fit border border-orange-500">
+              Date : {getFormattedDate(date)}
+            </h3>
           </div>
         )}
 
         <div className="mt-5">
-          <p className="text-lg mb-4">
-            Total Attendance: {data.total_attendance}
-          </p>
-          <h3 className="text-xl font-semibold mb-2">On Time:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-                <th className="px-4 py-2 border border-gray-300">Time In</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.on_time_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
-                </tr>
-              )}
-              {data.on_time_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {getFormattedTimeWithAMPM(item.time_in)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="mb-5">
+            <NumberCard
+              title="Total Attendance"
+              number={data?.total_attendance}
+              icon={<RiNumbersFill />}
+              subtitle="Total attendance of all employees"
+            />
+          </div>
 
-          <h3 className="text-xl font-semibold mb-2">Late:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-                <th className="px-4 py-2 border border-gray-300">Late by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.late_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
+          {/* check in report section */}
+          <div>
+            <div className="flex gap-2 items-center font-bold text-xl bg-green-600/10 text-green-600 border-green-600 border p-3 mb-3 rounded-lg">
+              <TbMessageReport /> Check-In Report
+            </div>
+            <h3 className="text-xl font-semibold mb-2">On Time:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Time In</th>
                 </tr>
-              )}
-              {data.late_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.checkInLateDuration}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3 className="text-xl font-semibold mb-2">Normal Checkout:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-                <th className="px-4 py-2 border border-gray-300">Time Out</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.normal_checked_out_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
-                </tr>
-              )}
-              {data.normal_checked_out_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {getFormattedTimeWithAMPM(item.time_out)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3 className="text-xl font-semibold mb-2">Early Check-out:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-                <th className="px-4 py-2 border border-gray-300">Early by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.early_check_out_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
-                </tr>
-              )}
-              {data.early_check_out_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.checkOutEarlyDuration}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.on_time_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.on_time_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {getFormattedTimeWithAMPM(item.time_in)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          <h3 className="text-xl font-semibold mb-2">Missed Check-out:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.missed_check_out_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
+            <h3 className="text-xl font-semibold mb-2">Late:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Late by</th>
                 </tr>
-              )}
-              {data.missed_check_out_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
+              </thead>
+              <tbody>
+                {data.late_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.late_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.checkInLateDuration}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* check out report section */}
+          <div>
+            <div className="flex gap-2 items-center font-bold text-xl bg-red-500/10 text-red-500 border-red-500 border p-3 mb-3 rounded-lg">
+              <TbMessageReport /> Check-Out Report
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Normal Checkout:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Time Out</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3 className="text-xl font-semibold mb-2">Absent:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.absent_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
+              </thead>
+              <tbody>
+                {data.normal_checked_out_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.normal_checked_out_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {getFormattedTimeWithAMPM(item.time_out)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <h3 className="text-xl font-semibold mb-2">Early Check-out:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
+                  <th className="px-4 py-2 border border-gray-300">Early by</th>
                 </tr>
-              )}
-              {data.absent_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
+              </thead>
+              <tbody>
+                {data.early_check_out_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.early_check_out_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.checkOutEarlyDuration}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <h3 className="text-xl font-semibold mb-2">Missed Check-out:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <h3 className="text-xl font-semibold mb-2">On Leave:</h3>
-          <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
-            <thead>
-              <tr className="bg-gray-100 text-left">
-                <th className="px-4 py-2 border border-gray-300">
-                  Employee Name
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.on_leave_employees?.length == 0 && (
-                <tr>
-                  <td className="px-4 py-2 border border-gray-300">None</td>
+              </thead>
+              <tbody>
+                {data.missed_check_out_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.missed_check_out_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div className="flex gap-2 items-center font-bold text-xl bg-yellow-500/10 text-yellow-500 border-yellow-500 border p-3 mb-3 rounded-lg">
+              <TbMessageReport /> Absent and On Leave Report
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Absent:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
                 </tr>
-              )}
-              {data.on_leave_employees?.map((item, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border border-gray-300">
-                    {item.employee.name}
-                  </td>
+              </thead>
+              <tbody>
+                {data.absent_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.absent_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <h3 className="text-xl font-semibold mb-2">On Leave:</h3>
+            <table className="min-w-full table-auto border-collapse border border-gray-300 mb-6">
+              <thead>
+                <tr className="bg-gray-100 text-left">
+                  <th className="px-4 py-2 border border-gray-300">
+                    Employee Name
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.on_leave_employees?.length == 0 && (
+                  <tr>
+                    <td className="px-4 py-2 border border-gray-300">None</td>
+                  </tr>
+                )}
+                {data.on_leave_employees?.map((item, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {item.employee.name}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       {/* chart */}
-      <div>
+      <hr />
+      <br />
+      <div className="p-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-bold my-3">
-            Total Attendance by Employee for this month
+          <h3 className="text-2xl font-bold my-3 text-orange-600">
+            Monthly Attendance Report
           </h3>
           <button
             onClick={() => handleCapture("chart")}
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
           >
             Download <PiDownloadBold />
           </button>
         </div>
-        <div ref={captureChartRef} className="grid auto-rows-auto  lg:grid-cols-2 gap-5">
+        <div
+          ref={captureChartRef}
+          className="grid auto-rows-auto  lg:grid-cols-2 gap-5"
+        >
           <TotalAbsentByEmployee data={data2} />
           <TotalOnLeaveByEmployee data={data2} />
           <TotalOnTimeByEmployee data={data2} />

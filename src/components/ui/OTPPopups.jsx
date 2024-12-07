@@ -3,6 +3,7 @@ import { assets } from "../../assets/assets";
 import { useEffect, useState } from "react";
 import { notify } from "../../utils/toastify";
 import { Link } from "react-router-dom";
+
 const OTPPopups = ({
   isAuth = true,
   setUser,
@@ -26,6 +27,10 @@ const OTPPopups = ({
         setIsExpired(true);
       }, 60 * 1.5 * 1000); // 1.5 minutes
     }
+
+    return () => {
+      setIsExpired(false);
+    };
   }, [isOTPOpen]);
 
   return (
@@ -125,7 +130,14 @@ const OTPPopups = ({
               />
               <small>
                 <span className="text-red-500">*</span> OTP will be expired in a
-                few minutes. Please check your email.
+                few minutes. Please check your{" "}
+                <Link
+                  to="https://t.me/cit_attendance_checkpoint_bot"
+                  className="underline text-blue-500 hover:text-blue-600"
+                >
+                  telegram
+                </Link>
+                .
               </small>
             </div>
             <button
@@ -138,12 +150,14 @@ const OTPPopups = ({
             <div>
               <button
                 onClick={() => {
+                  setOtp("");
                   if (!isExpired) {
                     notify("OTP is already sent, Check your email!", "info");
                   } else {
                     setIsOTPOpen({ status: true, type: "request" });
                   }
                 }}
+                type="button"
                 className="text-blue-500 hover:underline"
               >
                 Request a new OTP

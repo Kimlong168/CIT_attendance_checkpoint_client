@@ -2,11 +2,12 @@ import { useState } from "react";
 import { notify } from "../../../utils/toastify";
 import PropTypes from "prop-types";
 import RedStar from "../../../components/ui/RedStar";
-import { useGetCurrentIp } from "@/hooks/qrcode/useQrcode";
-import { CopyIcon } from "lucide-react";
+import Faq from "@/components/ui/Faq";
+// import { useGetCurrentIp } from "@/hooks/qrcode/useQrcode";
+// import { CopyIcon } from "lucide-react";
 
 const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
-  const { data: currentIp } = useGetCurrentIp();
+  // const { data: currentIp } = useGetCurrentIp();
   const [data, setData] = useState({
     location: initialData.location || "",
     workStartTime: initialData.workStartTime || "",
@@ -90,13 +91,13 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
     onSubmitFn(data);
   };
 
-  const handleCopy = () => {
-    if (currentIp?.userIp) {
-      navigator.clipboard.writeText(currentIp.userIp).then(() => {
-        notify("IP address copied to clipboard!", "success");
-      });
-    }
-  };
+  // const handleCopy = () => {
+  //   if (currentIp?.userIp) {
+  //     navigator.clipboard.writeText(currentIp.userIp).then(() => {
+  //       notify("IP address copied to clipboard!", "success");
+  //     });
+  //   }
+  // };
 
   return (
     <div className="w-full flex flex-col  border border-white/50 rounded-3xl gap-3">
@@ -145,7 +146,7 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
 
       {/* allowed network ranges */}
       <div className="space-y-4">
-        <div className="my-3 font-bold text-blue-500">
+        {/* <div className="my-3 font-bold text-blue-500">
           {currentIp ? (
             <span
               className="cursor-pointer flex items-center gap-2"
@@ -157,7 +158,8 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
           ) : (
             ""
           )}
-        </div>
+        </div> */}
+
         {data.allowedNetworkRanges.map((networkRange, index) => (
           <div key={index} className="p-4 border rounded-md shadow-sm bg-white">
             <div className="flex gap-4 mb-4">
@@ -179,7 +181,7 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
 
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700">
-                  IP Address
+                  Wi-Fi network IP range
                   <RedStar />
                 </label>
                 <input
@@ -223,6 +225,12 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
       >
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>
+
+      {/* Faq */}
+
+      <div id="faq">
+        <Faq />
+      </div>
     </div>
   );
 };
