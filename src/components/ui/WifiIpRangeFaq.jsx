@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
-const Faq = () => {
+const WifiIpRangeFaq = () => {
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div className="mt-12">
@@ -127,4 +127,4 @@ const Faq = () => {
   );
 };
 
-export default Faq;
+export default WifiIpRangeFaq;

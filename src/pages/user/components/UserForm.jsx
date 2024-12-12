@@ -3,6 +3,7 @@ import { useState } from "react";
 import { notify } from "../../../utils/toastify";
 import PropTypes from "prop-types";
 import RedStar from "../../../components/ui/RedStar";
+import ChadIdFaq from "@/components/ui/ChatIdFaq";
 const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
   const [data, setData] = useState({
     name: initialData.name || "",
@@ -120,6 +121,12 @@ const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
       >
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>
+
+      {/* faq */}
+
+      <div>
+        <ChadIdFaq />
+      </div>
     </div>
   );
 };

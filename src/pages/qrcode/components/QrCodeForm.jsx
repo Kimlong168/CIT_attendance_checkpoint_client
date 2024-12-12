@@ -2,7 +2,7 @@ import { useState } from "react";
 import { notify } from "../../../utils/toastify";
 import PropTypes from "prop-types";
 import RedStar from "../../../components/ui/RedStar";
-import Faq from "@/components/ui/Faq";
+import WifiIpRangeFaq from "@/components/ui/WifiIpRangeFaq";
 // import { useGetCurrentIp } from "@/hooks/qrcode/useQrcode";
 // import { CopyIcon } from "lucide-react";
 
@@ -229,7 +229,7 @@ const QrCodeForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
       {/* Faq */}
 
       <div id="faq">
-        <Faq />
+        <WifiIpRangeFaq />
       </div>
     </div>
   );
