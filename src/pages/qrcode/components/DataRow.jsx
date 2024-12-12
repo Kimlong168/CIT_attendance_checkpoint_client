@@ -8,7 +8,6 @@ import downloadQrcode from "@/utils/downloadQrcode";
 const url = import.meta.env.VITE_APP_BASE_URL + "/user/attendance?att=";
 
 export const renderRows = (item, index, handleDelete) => {
-  
   const wifiNames = item.allowedNetworkRanges
     .map((range) => range.wifiName)
     .join(", ");
@@ -36,7 +35,10 @@ export const renderRows = (item, index, handleDelete) => {
               fgColor={"black"}
               bgColor={"white"}
             />
-            <span className="font-semibold mt-1">{item.location}</span>
+            <span className="font-semibold mt-1 text-center">
+              {item.location}
+              <br /> ({item.workStartTime} - {item.workEndTime})
+            </span>
           </div>
         </td>
 

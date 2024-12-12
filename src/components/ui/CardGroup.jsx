@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { FaRegUser } from "react-icons/fa6";
 import { VscGitPullRequestGoToChanges } from "react-icons/vsc";
+import { TbLiveView } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaQrcode, FaTelegramPlane } from "react-icons/fa";
 import { LuClipboardList } from "react-icons/lu";
@@ -15,7 +16,7 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="View attendance"
           href="/attendance"
           Icon={LuClipboardList}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
         />
       </div>
       <div className="grid gap-4 md:grid-cols-3">
@@ -24,7 +25,14 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="Approve or Reject leave request"
           href="/leaveRequest"
           Icon={VscGitPullRequestGoToChanges}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
+        />
+        <Card
+          title="Client Visit Log"
+          subtitle="Review client visit logs"
+          href="/clientVisitLog"
+          Icon={TbLiveView}
+          numberOfItem={""}
         />
         <Card
           title="User"
@@ -39,7 +47,7 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="Manage qr-code"
           href="/qrcode"
           Icon={FaQrcode}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
         />
 
         <Card
@@ -47,7 +55,7 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="Send message"
           href="/telegram"
           Icon={FaTelegramPlane}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
         />
 
         <Card
@@ -55,7 +63,7 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="View attendance reports"
           href="/report/attendance"
           Icon={TbReport}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
         />
 
         <Card
@@ -63,7 +71,7 @@ const CardGroup = ({ itemNumber }) => {
           subtitle="Manage profile"
           href="/profile"
           Icon={IoSettingsOutline}
-          numberOfItem={itemNumber?.mail}
+          numberOfItem={""}
         />
       </div>
     </div>

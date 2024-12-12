@@ -31,6 +31,9 @@ import AdminApprovedOrRejected from "./pages/leaveRequest/AdminApprovedOrRejecte
 import CheckInCheckOut from "./pages/attendance/CheckInCheckOut";
 import AttendanceReport from "./pages/report/AttendanceReport";
 
+import ClientVisitLog from "./pages/clientVisitLog";
+import CrudClientVisitLog from "./pages/clientVisitLog/CrudClientVisitLog";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -80,7 +83,10 @@ const router = createBrowserRouter([
         path: "/leaveRequest",
         element: <LeaveRequest />,
       },
-
+      {
+        path: "/clientVisitLog",
+        element: <ClientVisitLog />,
+      },
       {
         path: "/leaveRequest/approve/:id",
         element: <AdminApprovedOrRejected />,
@@ -115,6 +121,11 @@ const router = createBrowserRouter([
   {
     path: "/user/leaveRequest",
     element: <PrivateRoute roles={["user"]} element={CrudLeaveRequest} />,
+  },
+
+  {
+    path: "/user/clientVisitLog",
+    element: <PrivateRoute roles={["user"]} element={CrudClientVisitLog} />,
   },
 
   {

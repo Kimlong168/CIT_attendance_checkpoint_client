@@ -10,6 +10,7 @@ import {
 } from "@/hooks/attendance/useAttendance";
 import { useQrcodes } from "@/hooks/qrcode/useQrcode";
 import {
+  convertTimeToDate,
   getFormattedDate,
   getFormattedTimeWithAMPM,
 } from "@/utils/getFormattedDate";
@@ -106,12 +107,8 @@ const CheckInCheckOut = () => {
       return notify("Please try again, something went wrong!", "error");
     }
 
-    const workStartTime = qrcode.workStartTime;
-
     // Convert to Date objects
-    const [startHours, startMinutes] = workStartTime.split(":").map(Number);
-
-    const WORK_START_TIME = new Date().setHours(startHours, startMinutes, 0, 0);
+    const WORK_START_TIME = convertTimeToDate(qrcode.workStartTime);
 
     if (new Date(currentTime).getTime() <= WORK_START_TIME) {
       checkInStatus = "On Time";
@@ -171,9 +168,7 @@ const CheckInCheckOut = () => {
     }
 
     // Convert to Date objects
-    const workEndTime = qrcode.workEndTime;
-    const [endHours, endMinutes] = workEndTime.split(":").map(Number);
-    const WORK_END_TIME = new Date().setHours(endHours, endMinutes, 0, 0);
+    const WORK_END_TIME = convertTimeToDate(qrcode.workEndTime);
 
     // Assuming WORK_END_TIME is defined and represents the end of the workday
     if (new Date(currentTime).getTime() >= WORK_END_TIME) {
@@ -246,7 +241,6 @@ const CheckInCheckOut = () => {
   const dataToExport = attendancesHistory?.map((att, index) => {
     return {
       No: index + 1,
-      ID: att._id,
       Employee: att.employee?.name,
       "Time In":
         getFormattedTimeWithAMPM(att.time_in) +
@@ -287,8 +281,8 @@ const CheckInCheckOut = () => {
 
                 <table>
                   <tr>
-                    <td className="pr-12">Check In:</td>
-                    <td className="pr-12 truncate">
+                    <td className="pr-10 ">Check In:</td>
+                    <td className="pr-10 truncate">
                       {getFormattedTimeWithAMPM(isCheckIn.time_in)} (
                       {isCheckIn.check_in_status}
                       {isCheckIn.check_in_status == "Late" &&
@@ -297,8 +291,8 @@ const CheckInCheckOut = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="pr-12 truncate">Check Out:</td>
-                    <td className="pr-12">
+                    <td className="pr-10 truncate">Check Out:</td>
+                    <td className="pr-10">
                       {isCheckIn.time_out ? (
                         getFormattedTimeWithAMPM(isCheckIn.time_out) +
                         ` (${isCheckIn.check_out_status}${
@@ -421,6 +415,8 @@ const CheckInCheckOut = () => {
                                         ? " " + att.checkOutEarlyDuration
                                         : ""
                                     })`
+                                  : att.check_in_status == "Absent"
+                                  ? "(Absent)"
                                   : "Not yet checked out"}
                               </span>
                             </div>

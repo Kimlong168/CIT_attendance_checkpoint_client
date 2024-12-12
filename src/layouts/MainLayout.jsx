@@ -10,6 +10,7 @@ import { Outlet } from "react-router-dom";
 import ConfirmModal from "../components/ui/ConfirmModal";
 import { notify } from "../utils/toastify";
 import { VscGitPullRequestGoToChanges } from "react-icons/vsc";
+import { TbLiveView } from "react-icons/tb";
 import { TbLogout2, TbReport } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa6";
 
@@ -105,6 +106,11 @@ const AdminLayout = () => {
       tabName: "Leave Reqest",
       icon: <VscGitPullRequestGoToChanges />,
       pathName: "/leaveRequest",
+    },
+    {
+      tabName: "Client Visit Log",
+      icon: <TbLiveView />,
+      pathName: "/clientVisitLog",
     },
     {
       tabName: "user",

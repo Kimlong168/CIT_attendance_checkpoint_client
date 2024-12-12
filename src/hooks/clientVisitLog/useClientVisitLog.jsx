@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axiosClient from "../../api/axiosClient";
 
-export const useLeaveRequests = () => {
+export const useClientVisitLogs = () => {
   return useQuery(
-    "leaveRequests",
+    "clientVisitLogs",
     async () => {
-      const response = await axiosClient.get(`/leave-requests`);
+      const response = await axiosClient.get(`/client-visit-log`);
       console.log("response result:", response.data);
       return response.data;
     },
@@ -18,11 +18,11 @@ export const useLeaveRequests = () => {
   );
 };
 
-export const useLeaveRequest = (id) => {
+export const useClientVisitLog = (id) => {
   return useQuery(
-    ["leaveRequest", id],
+    ["clientVisitLog", id],
     async () => {
-      const response = await axiosClient.get(`/leave-requests/${id}`);
+      const response = await axiosClient.get(`/client-visit-log/${id}`);
       return response.data;
     },
     {
@@ -34,11 +34,13 @@ export const useLeaveRequest = (id) => {
   );
 };
 
-export const useLeaveRequestsByEmployeeId = (id) => {
+export const useClientVisitLogsByEmployeeId = (id) => {
   return useQuery(
-    ["leaveRequest", id],
+    ["clientVisitLog", id],
     async () => {
-      const response = await axiosClient.get(`/leave-requests/employee/${id}`);
+      const response = await axiosClient.get(
+        `/client-visit-log/employee/${id}`
+      );
       return response.data;
     },
     {
@@ -50,90 +52,68 @@ export const useLeaveRequestsByEmployeeId = (id) => {
   );
 };
 
-
-export const useCreateLeaveRequest = () => {
+export const useCreateClientVisitLog = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
     async (request) => {
-      const response = await axiosClient.post(`/leave-requests`, request);
+      const response = await axiosClient.post(`/client-visit-log`, request);
 
       return response.data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("leaveRequests");
+        queryClient.invalidateQueries("clientVisitLogs");
       },
     }
   );
 };
 
-export const useUpdateLeaveRequest = () => {
+export const useUpdateClientVisitLog = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
     async (request) => {
       const response = await axiosClient.put(
-        `/leave-requests/${request.id}`,
+        `/client-visit-log/${request.id}`,
         request
       );
       return response.data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("leaveRequests");
+        queryClient.invalidateQueries("clientVisitLogs");
       },
     }
   );
 };
 
-export const useDeleteLeaveRequest = () => {
+export const useDeleteClientVisitLog = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async (id) => {
-      const response = await axiosClient.delete(`/leave-requests/${id}`);
+      const response = await axiosClient.delete(`/client-visit-log/${id}`);
       return response.data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("leaveRequests");
+        queryClient.invalidateQueries("clientVisitLogs");
       },
     }
   );
 };
 
-export const useApproveOrRejectLeaveRequest = () => {
-  const queryClient = useQueryClient();
-  return useMutation(
-    async (request) => {
-      const response = await axiosClient.put(
-        `/leave-requests/approve/${request.id}`,
-        request
-      );
-      return response.data;
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("leaveRequests");
-      },
-    }
-  );
-};
-
-export const useClearAllLeaveRequests = () => {
+export const useClearAllClientVisitLogs = () => {
   const queryClient = useQueryClient();
   return useMutation(
     async () => {
-      const response = await axiosClient.delete(`/leave-requests/clear-all`);
+      const response = await axiosClient.delete(`/client-visit-log/clear-all`);
       return response.data;
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("leaveRequests");
-        
+        queryClient.invalidateQueries("clientVisitLogs");
       },
     }
   );
 };
-
-

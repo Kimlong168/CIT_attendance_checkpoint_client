@@ -1,12 +1,15 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import {
-  useLeaveRequestsByEmployeeId,
-  useDeleteLeaveRequest,
-  useCreateLeaveRequest,
-  useUpdateLeaveRequest,
-} from "@/hooks/leaveRequest/useLeaveRequest";
+  useClientVisitLogsByEmployeeId,
+  useDeleteClientVisitLog,
+  useCreateClientVisitLog,
+  useUpdateClientVisitLog,
+} from "@/hooks/clientVisitLog/useClientVisitLog";
 import { useContext, useEffect, useState } from "react";
-import { getFormattedDate } from "@/utils/getFormattedDate";
+import {
+  getFormattedDate,
+  getFormattedTimeWithAMPM,
+} from "@/utils/getFormattedDate";
 import {
   IoIosArrowDropdown,
   IoIosArrowDropup,
@@ -14,40 +17,55 @@ import {
 } from "react-icons/io";
 import { handleDeleteFunction } from "@/utils/handleDeleteFunction";
 import { notify } from "@/utils/toastify";
-import getNumberOfDays from "@/utils/getNumberOfDays";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import ExportToExcel from "@/components/table/ExportToExcel";
 import ExportToPDF from "@/components/table/ExportToPDF";
 import { scrollToTop } from "@/utils/scrollToTop";
 
-const CrudLeaveRequest = () => {
+const CrudClientVisitLog = () => {
   const { user } = useContext(AuthContext);
-  const { data, isLoading, refetch } = useLeaveRequestsByEmployeeId(user._id);
-  const deleteLeaveRequest = useDeleteLeaveRequest();
-  const createLeaveRequest = useCreateLeaveRequest();
-  const updateLeaveRequest = useUpdateLeaveRequest();
-  const leaveTypes = ["Sick Leave", "Vacation", "Emergency Leave", "Other"];
+  const { data, isLoading, refetch } = useClientVisitLogsByEmployeeId(user._id);
+  const deleteClientVisitLog = useDeleteClientVisitLog();
+  const createClientVisitLog = useCreateClientVisitLog();
+  const updateClientVisitLog = useUpdateClientVisitLog();
 
-  const [leaveRequest, setLeaveRequest] = useState({
-    type: "",
-    start_date: "",
-    end_date: "",
-    reason: "",
+  const [clientVisitLog, setClientVisitLog] = useState({
+    agentName: "",
+    purpose: "",
+    date: new Date().toISOString().split("T")[0], // Default to today's date
+    startTime: "",
+    expectedEndTime: "",
+    notes: "",
   });
 
-  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [clientVisitLogs, setClientVisitLogs] = useState([]);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [expandIndex, setExpandIndex] = useState(0);
 
   useEffect(() => {
     if (data) {
-      setLeaveRequests(data);
+      setClientVisitLogs(data);
     }
   }, [data]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setLeaveRequest((prev) => ({ ...prev, [name]: value }));
+    // If the field is a time field, update the time
+    if (name === "startTime" || name === "expectedEndTime") {
+      const [hours, minutes] = value.split(":");
+      const updatedTime = new Date(clientVisitLog.startTime || new Date());
+      updatedTime.setHours(hours);
+      updatedTime.setMinutes(minutes);
+
+      // Update the clientVisitLog with the new time
+      setClientVisitLog((prev) => ({
+        ...prev,
+        [name]: updatedTime.toISOString(),
+      }));
+    } else {
+      // For other fields, update normally
+      setClientVisitLog((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -55,40 +73,35 @@ const CrudLeaveRequest = () => {
 
     // validate data
     if (
-      !leaveRequest.type ||
-      !leaveRequest.start_date ||
-      !leaveRequest.end_date ||
-      !leaveRequest.reason
+      !clientVisitLog.agentName ||
+      !clientVisitLog.purpose ||
+      !clientVisitLog.date ||
+      !clientVisitLog.startTime
     ) {
       notify("Please fill all fields", "error");
-      console.log("leaveRequest:", leaveRequest);
       return;
     }
-    // start date must be greater than today
-    if (new Date(leaveRequest.start_date) < new Date()) {
-      notify("Start date must be greater than today", "error");
-      return;
-    }
+    // formated data to add or update
+    const dataToAddOrUpdate = {
+      ...clientVisitLog,
+      // startTime: convertTimeToDate(clientVisitLog.startTime),
+      // expectedEndTime: convertTimeToDate(clientVisitLog.expectedEndTime),
+    };
 
-    // check date
-    if (new Date(leaveRequest.start_date) > new Date(leaveRequest.end_date)) {
-      notify("Start date must be less than end date", "error");
-
-      return;
-    }
+    console.log("dataToAddOrUpdate", dataToAddOrUpdate);
 
     // check if editing or adding
     if (parseInt(editingIndex) >= 0) {
-      const updatedLeaves = leaveRequests.map((leave, index) =>
-        index === editingIndex ? leaveRequest : leave
+      const updatedClientVisitLogs = clientVisitLogs.map((item, index) =>
+        index === editingIndex ? clientVisitLog : item
       );
-      setLeaveRequests(updatedLeaves);
+      setClientVisitLogs(updatedClientVisitLogs);
       setEditingIndex(-1);
 
       try {
-        const result = await updateLeaveRequest.mutateAsync({
-          id: leaveRequests[editingIndex]._id,
-          ...leaveRequest,
+        const result = await updateClientVisitLog.mutateAsync({
+          id: clientVisitLogs[editingIndex]._id,
+          ...dataToAddOrUpdate,
         });
 
         if (result.status === "success") {
@@ -96,38 +109,42 @@ const CrudLeaveRequest = () => {
         } else {
           notify("Update fail!", "error");
         }
-        console.log("Request item:", result);
+        console.log("Created item:", result);
       } catch (error) {
         notify("Update fail!", "error");
         console.error("Error Updating item:", error);
       }
     } else {
       try {
-        const result = await createLeaveRequest.mutateAsync(leaveRequest);
+        const result = await createClientVisitLog.mutateAsync(
+          dataToAddOrUpdate
+        );
 
         if (result.status === "success") {
-          notify("Request successfully", "success");
+          notify("Created successfully", "success");
           refetch();
         } else {
           notify(result.error.message, "info");
         }
-        console.log("Request item:", result);
+        console.log("Created item:", result);
       } catch (error) {
-        notify("Request fail!", "error");
-        console.error("Error Requesting item:", error);
+        notify("Created fail!", "error");
+        console.error("Error Creating item:", error);
       }
     }
 
-    setLeaveRequest({
-      type: "",
-      start_date: "",
-      end_date: "",
-      reason: "",
+    setClientVisitLog({
+      agentName: "",
+      purpose: "",
+      date: new Date().toISOString().split("T")[0], // Default to today's date
+      startTime: "",
+      expectedEndTime: "",
+      notes: "",
     });
   };
 
   const handleEdit = (index) => {
-    setLeaveRequest(leaveRequests[index]);
+    setClientVisitLog(clientVisitLogs[index]);
     setEditingIndex(index);
   };
 
@@ -135,7 +152,7 @@ const CrudLeaveRequest = () => {
   const handleDelete = async (id) => {
     handleDeleteFunction(async () => {
       try {
-        const result = await deleteLeaveRequest.mutateAsync(id);
+        const result = await deleteClientVisitLog.mutateAsync(id);
 
         if (result.status === "success") {
           notify("Delete successfully", "success");
@@ -150,21 +167,16 @@ const CrudLeaveRequest = () => {
     });
   };
 
-  const dataToExport = leaveRequests.map((item, index) => {
+  const dataToExport = clientVisitLogs.map((item, index) => {
     return {
       No: index + 1,
       Employee: item.employee?.name + `(${item.employee?.role})`,
-      Type: item.type,
-      Status: item.status,
-      "Leave Date": `${getFormattedDate(item.start_date)} - ${getFormattedDate(
-        item.end_date
-      )}`,
-      Reason: item.reason,
-      "Approved By": item.approvedOrRejectedBy
-        ? item.approvedOrRejectedBy?.name +
-          `(${item.approvedOrRejectedBy?.role})`
-        : "Not Yet",
-      "Request Date": getFormattedDate(item.created_at),
+      Agent: item.agentName,
+      Purpose: item.purpose,
+      Date: getFormattedDate(item.date),
+      ST: getFormattedTimeWithAMPM(item.startTime),
+      EET: getFormattedTimeWithAMPM(item.expectedEndTime),
+      Notes: item.notes || "",
     };
   });
 
@@ -185,20 +197,22 @@ const CrudLeaveRequest = () => {
           <MdOutlineArrowBackIos />
         </button>
 
-        {/* update and create leave request form */}
+        {/* update and create client visit log form */}
         <div>
           <div className="flex items-center justify-between my-5">
-            <h2 className="text-2xl font-bold">Leave Request Form </h2>
+            <h2 className="text-2xl font-bold">Client Visit Log Form </h2>
             {editingIndex >= 0 && (
               <span
                 className="cursor-pointer"
                 onClick={() => {
                   setEditingIndex(-1);
-                  setLeaveRequest({
-                    type: "",
-                    start_date: "",
-                    end_date: "",
-                    reason: "",
+                  setClientVisitLog({
+                    agentName: "",
+                    purpose: "",
+                    date: "",
+                    startTime: "",
+                    expectedEndTime: "",
+                    notes: "",
                   });
                 }}
               >
@@ -209,108 +223,138 @@ const CrudLeaveRequest = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Leave Type
+                Agent Name
               </label>
-              <select
-                value={leaveRequest.type}
+              <input
+                value={clientVisitLog.agentName}
                 onChange={handleChange}
-                name="type"
+                name="agentName"
                 required
                 className="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Select a leave type</option>
-                {leaveTypes.map((type, index) => (
-                  <option key={index} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Start Date
+                Purpose
               </label>
-              <input
-                type="date"
-                name="start_date"
-                value={leaveRequest.start_date?.split("T")[0]}
+              <textarea
+                type="text"
+                name="purpose"
+                value={clientVisitLog.purpose}
+                rows={2}
                 onChange={handleChange}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md min-h-[70px] max-h-[200px]"
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                End Date
+                Date
               </label>
               <input
                 type="date"
-                name="end_date"
-                value={leaveRequest.end_date?.split("T")[0]}
+                name="date"
+                value={clientVisitLog.date?.split("T")[0]}
                 onChange={handleChange}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
                 required
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Reason
+                Start Time {clientVisitLog.startTime}
+              </label>
+              <input
+                type="time"
+                name="startTime"
+                value={
+                  clientVisitLog.startTime
+                    ? new Date(clientVisitLog.startTime).toLocaleTimeString(
+                        "en-US",
+                        {
+                          hour12: false,
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )
+                    : ""
+                }
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Expected End Time
+              </label>
+              <input
+                type="time"
+                name="expectedEndTime"
+                value={
+                  clientVisitLog.expectedEndTime
+                    ? new Date(
+                        clientVisitLog.expectedEndTime
+                      ).toLocaleTimeString("en-US", {
+                        hour12: false,
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : ""
+                }
+                onChange={handleChange}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Notes
               </label>
               <input
                 type="text"
-                name="reason"
-                value={leaveRequest.reason}
+                name="notes"
+                value={clientVisitLog.notes}
                 onChange={handleChange}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
               />
             </div>
+
             <button
               disabled={
-                updateLeaveRequest.isLoading || createLeaveRequest.isLoading
+                updateClientVisitLog.isLoading || createClientVisitLog.isLoading
               }
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
             >
               {editingIndex >= 0
-                ? updateLeaveRequest.isLoading
+                ? updateClientVisitLog.isLoading
                   ? "Updating..."
-                  : "Update Leave"
-                : createLeaveRequest.isLoading
-                ? "Requesting..."
-                : "Request Leave"}{" "}
-              {leaveRequest.start_date &&
-                leaveRequest.end_date &&
-                `(${getNumberOfDays(
-                  leaveRequest.start_date,
-                  leaveRequest.end_date
-                )} ${
-                  getNumberOfDays(
-                    leaveRequest.start_date,
-                    leaveRequest.end_date
-                  ) > 1
-                    ? "days"
-                    : "day"
-                }) `}
+                  : "Update Client Visit Log"
+                : createClientVisitLog.isLoading
+                ? "Creating..."
+                : "Create Client Visit Log"}
             </button>
           </form>
         </div>
 
-        {/* listing all leave requests */}
+        {/* listing all client visit logs */}
         <div className="mt-5">
           <h3 className="text-xl font-semibold w-full">
-            All Leave Requests{" "}
-            {leaveRequests?.length > 0 && `(${leaveRequests.length})`}
+            All Client Visit Logs{" "}
+            {clientVisitLogs?.length > 0 && `(${clientVisitLogs.length})`}
           </h3>
 
           {isLoading ? (
             <small className="mt-2.5 block">Fetching Leave Requests...</small>
           ) : (
             <div>
-              {leaveRequests.length > 0 ? (
+              {clientVisitLogs.length > 0 ? (
                 <>
                   <ul className="mt-4 space-y-2">
-                    {leaveRequests.map((leave, index) => (
+                    {clientVisitLogs.map((item, index) => (
                       <li
                         key={index}
                         className="flex justify-between items-center p-2 border border-gray-200 rounded-md relative"
@@ -332,98 +376,69 @@ const CrudLeaveRequest = () => {
                         <div>
                           <div>
                             <strong className="min-w-[150px] inline-block">
-                              Status:
+                              Agent name:
                             </strong>
-                            <span
-                              className={
-                                (leave.status === "Approved"
-                                  ? "bg-green-600/20 border-green-600 text-green-600"
-                                  : leave.status == "Rejected"
-                                  ? "bg-red-500/20 border-red-500 text-red-500"
-                                  : "bg-orange-500/20 border-orange-500 text-orange-500") +
-                                " px-2  h-7 rounded w-[90px] text-center border"
-                              }
-                            >
-                              {leave.status}
-                            </span>
-                          </div>
-                          <div>
+                            {item.agentName}
+                          </div>{" "}
+                          <div className="line-clamp-1 hover:line-clamp-none">
                             <strong className="min-w-[150px] inline-block">
-                              Type:
+                              Purpose:
                             </strong>
-                            {leave.type}
+                            {item.purpose}
                           </div>
-                          <div>
-                            <strong className="min-w-[150px] inline-block">
-                              Start Date:
-                            </strong>
-                            {getFormattedDate(leave.start_date)}
-                          </div>
-                          <div>
-                            <strong className="min-w-[150px] inline-block">
-                              End Date:
-                            </strong>
-                            {getFormattedDate(leave.end_date)}
-                          </div>
-
                           {expandIndex === index && (
                             <>
                               {" "}
-                              <div className="line-clamp-1 hover:line-clamp-none">
-                                <strong className="min-w-[150px] inline-block">
-                                  Reason:
-                                </strong>
-                                {leave.reason}
-                              </div>
                               <div>
                                 <strong className="min-w-[150px] inline-block">
-                                  Request Date:
+                                  Date:
                                 </strong>
-                                {getFormattedDate(leave.created_at)}
-                              </div>
-                              <div>
-                                <strong className="min-w-[150px] inline-block">
-                                  A/R By:
-                                </strong>
-                                {leave.approvedOrRejectedBy?.name || "Not yet"}
+                                {getFormattedDate(item.date)}
                               </div>
                               <div className="line-clamp-1 hover:line-clamp-none">
                                 <strong className="min-w-[150px] inline-block">
-                                  Comment:
+                                  Start Time:
                                 </strong>
-                                {leave.comment}
+                                {getFormattedTimeWithAMPM(item.startTime)}
+                              </div>
+                              <div className="line-clamp-1 hover:line-clamp-none">
+                                <strong className="min-w-[150px] inline-block">
+                                  Expected End Time:
+                                </strong>
+                                {getFormattedTimeWithAMPM(item.expectedEndTime)}
+                              </div>
+                              <div>
+                                <strong className="min-w-[150px] inline-block">
+                                  Notes:
+                                </strong>
+                                {item.notes ? item.notes : "No notes"}
                               </div>
                             </>
                           )}
-
                           <div className="mt-1">
-                            {leave.status === "Pending" && (
-                              <>
-                                <button
-                                  onClick={() => {
-                                    handleEdit(index);
-                                    scrollToTop();
-                                  }}
-                                  className="text-blue-600 hover:underline"
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  disabled={deleteLeaveRequest.isLoading}
-                                  onClick={() => handleDelete(leave._id)}
-                                  className="ml-3 text-red-600 hover:underline"
-                                >
-                                  Delete
-                                </button>
-                              </>
-                            )}
+                            <button
+                              onClick={() => {
+                                handleEdit(index);
+                                scrollToTop();
+                              }}
+                              className="text-blue-600 hover:underline"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              disabled={deleteClientVisitLog.isLoading}
+                              onClick={() => handleDelete(item._id)}
+                              className="ml-3 text-red-600 hover:underline"
+                            >
+                              Delete
+                            </button>
                           </div>
                         </div>
                       </li>
                     ))}
                   </ul>
 
-                  {leaveRequests.length > 0 && (
+                  {clientVisitLogs.length > 0 && (
                     <div className="mt-3 space-y-2">
                       <span> Export to:</span>
                       <div className="flex gap-1 w-fit justify-end">
@@ -454,4 +469,4 @@ const CrudLeaveRequest = () => {
   );
 };
 
-export default CrudLeaveRequest;
+export default CrudClientVisitLog;

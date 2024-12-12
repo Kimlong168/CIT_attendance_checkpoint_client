@@ -4,75 +4,72 @@ import Table from "../../components/table/Table";
 import TableBody from "../../components/table/TableBody";
 import TableHeader from "../../components/table/TableHeader";
 import LoadingInTable from "../../components/ui/LoadingInTable";
-import {
-  getFormattedDate,
-  getFormattedTimeWithAMPM,
-} from "@/utils/getFormattedDate";
+
 import { renderRows } from "./components/DataRow";
 import PageTitle from "../../components/ui/PageTitle";
 import SelectNumberPerPage from "../../components/form/SelectNumberPerPage";
 import SearchBar from "../../components/form/SearchBar";
-import { notify } from "../../utils/toastify";
-import { handleDeleteFunction } from "../../utils/handleDeleteFunction";
-import {
-  useAttendances,
-  useDeleteAttendance,
-} from "@/hooks/attendance/useAttendance";
-import { AttendanceContext } from "@/contexts/AttendanceContext";
+
 import ExportToExcel from "@/components/table/ExportToExcel";
 import ExportToPDF from "@/components/table/ExportToPDF";
 import SelectFilter from "@/components/form/SelectFilter";
+import {
+  getFormattedDate,
+  getFormattedTimeWithAMPM,
+} from "@/utils/getFormattedDate";
 import { useUsers } from "@/hooks/user/useUser";
+import { handleDeleteFunction } from "@/utils/handleDeleteFunction";
+import { notify } from "@/utils/toastify";
+import { useNavigate } from "react-router-dom";
+import {
+  useClearAllClientVisitLogs,
+  useClientVisitLogs,
+  useDeleteClientVisitLog,
+} from "@/hooks/clientVisitLog/useClientVisitLog";
+import { ClientVisitLogContext } from "@/contexts/ClientVisitLog";
 
-const Attendance = () => {
-  const { data, isLoading, isError } = useAttendances();
+const ClientVisitLog = () => {
+  const { data, isLoading, isError } = useClientVisitLogs();
   const { data: users, isLoading: isUserLoading } = useUsers();
-  const deleteAttendance = useDeleteAttendance();
-
+  const clearAllClientVisitLogs = useClearAllClientVisitLogs();
+  const deleteAttendance = useDeleteClientVisitLog();
   const {
-    state: attendances,
+    state: clientVisitLogs,
     dispatch,
-    removeAttendance,
-    searchAttendance,
-  } = useContext(AttendanceContext);
+    removeClientVisitLog,
+    searchClientVisitLog,
+  } = useContext(ClientVisitLogContext);
 
   const [searchKeyWord, setSearchKeyWord] = useState("");
   const [numberOfRecordsPerPage, setNumberOfRecordsPerPage] = useState(
     sessionStorage.getItem("numberOfRecordsPerPage") || 5
   );
+  const navigate = useNavigate();
 
+  //  order history list
   useEffect(() => {
     if (data) {
-      dispatch({ type: "SET_ATTENDANCE", payload: data });
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: data });
     }
   }, [data, dispatch]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchKeyWord.trim() === "") {
-      dispatch({ type: "SET_ATTENDANCE", payload: data });
-    } else {
-      searchAttendance(searchKeyWord);
-    }
-  };
-
   const handleFilterByEmployee = (employee) => {
     if (employee === "all") {
-      dispatch({ type: "SET_ATTENDANCE", payload: data });
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: data });
     } else {
       const filteredData = data.filter(
         (item) => item.employee?._id === employee
       );
-      dispatch({ type: "SET_ATTENDANCE", payload: filteredData });
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: filteredData });
     }
   };
 
   const handleFilterByDate = (date) => {
     if (date === "all") {
-      dispatch({ type: "SET_ATTENDANCE", payload: data });
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: data });
     } else {
       const filteredData = data.filter((item) => {
-        const recordDate = new Date(item.date);
+        const visitDate = new Date(item.created_at);
         const today = new Date();
 
         // Calculate relevant date ranges
@@ -112,39 +109,55 @@ const Attendance = () => {
 
         // Filtering based on the date parameter
         if (date === "today") {
-          return recordDate.toDateString() === today.toDateString();
+          return visitDate.toDateString() === today.toDateString();
         } else if (date === "yesterday") {
-          return recordDate.toDateString() === yesterday.toDateString();
+          return visitDate.toDateString() === yesterday.toDateString();
         } else if (date === "this_week") {
-          return recordDate >= startOfWeek && recordDate <= endOfWeek;
+          return visitDate >= startOfWeek && visitDate <= endOfWeek;
         } else if (date === "last_week") {
-          return recordDate >= startOfLastWeek && recordDate < startOfWeek;
+          return visitDate >= startOfLastWeek && visitDate < startOfWeek;
         } else if (date === "this_month") {
-          return recordDate >= startOfMonth && recordDate <= endOfMonth;
+          return visitDate >= startOfMonth && visitDate <= endOfMonth;
         } else if (date === "last_month") {
-          return recordDate >= startOfLastMonth && recordDate <= endOfLastMonth;
+          return visitDate >= startOfLastMonth && visitDate <= endOfLastMonth;
         } else if (date === "this_year") {
-          return recordDate >= startOfYear && recordDate <= endOfYear;
+          return visitDate >= startOfYear && visitDate <= endOfYear;
         } else {
           // Last 6 months
-          return recordDate >= startOfLast6Months && recordDate <= today;
+          return visitDate >= startOfLast6Months && visitDate <= today;
         }
       });
 
-      dispatch({ type: "SET_ATTENDANCE", payload: filteredData });
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: filteredData });
     }
   };
 
-  const handleFilterByStatus = (status) => {
-    if (status === "all") {
-      dispatch({ type: "SET_ATTENDANCE", payload: data });
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchKeyWord.trim() === "") {
+      dispatch({ type: "SET_CLIENT_VISIT_LOGS", payload: data });
     } else {
-      const filteredData = data.filter(
-        (item) =>
-          item.check_in_status === status || item.check_out_status === status
-      );
-      dispatch({ type: "SET_ATTENDANCE", payload: filteredData });
+      searchClientVisitLog(searchKeyWord);
     }
+  };
+
+  const handleClearAll = async () => {
+    handleDeleteFunction(async () => {
+      try {
+        const result = await clearAllClientVisitLogs.mutateAsync();
+
+        if (result.status === "success") {
+          notify("Clear all client visit logs successfully", "success");
+          navigate("/clientVisitLog");
+        } else {
+          notify(result.error.message, "error");
+          console.error("Error deleting item:", result.error.message);
+        }
+      } catch (error) {
+        console.error("Error deleting item:", error);
+        notify("Clear all fail!", "error");
+      }
+    }, "Are you sure you want to clear all client visit logs? Once deleted, you will not be able to recover this data!");
   };
 
   // handle delete
@@ -155,7 +168,7 @@ const Attendance = () => {
 
         if (result.status === "success") {
           notify("Delete successfully", "success");
-          removeAttendance(id);
+          removeClientVisitLog(id);
         } else {
           notify("Delete fail!", "error");
         }
@@ -166,24 +179,16 @@ const Attendance = () => {
     });
   };
 
-  const dataToExport = attendances.map((att, index) => {
+  const dataToExport = clientVisitLogs.map((item, index) => {
     return {
       No: index + 1,
-      Employee: att.employee?.name,
-      "Time In":
-        getFormattedTimeWithAMPM(att.time_in) +
-        " (" +
-        att.check_in_status +
-        ")",
-      "Late Time": att.checkInLateDuration,
-      "Time Out":
-        getFormattedTimeWithAMPM(att.time_out) +
-        " (" +
-        att.check_out_status +
-        ")",
-      "Early Time": att.checkOutEarlyDuration,
-      Date: getFormattedDate(att.date),
-      Location: att.qr_code?.location,
+      Employee: item.employee?.name + `(${item.employee?.role})`,
+      Agent: item.agentName,
+      Purpose: item.purpose,
+      Date: getFormattedDate(item.date),
+      ST: getFormattedTimeWithAMPM(item.startTime),
+      EET: getFormattedTimeWithAMPM(item.expectedEndTime),
+      Notes: item.notes || "",
     };
   });
 
@@ -194,14 +199,18 @@ const Attendance = () => {
   return (
     <div>
       {/* page title */}
-      <PageTitle title={`Attendances (${attendances?.length || 0})`} link="#" />
+      <PageTitle
+        title={`Client Visit Logs (${clientVisitLogs?.length || 0})`}
+        link="#"
+      />
 
       {/* search and filter */}
-      <div className="flex flex-col md:flex-row items-center gap-5 py-5 ">
+
+      <div className="flex flex-col md:flex-row md:items-center gap-5 py-5 ">
         <SelectNumberPerPage
           setNumberOfRecordsPerPage={setNumberOfRecordsPerPage}
           numberOfRecordsPerPage={numberOfRecordsPerPage}
-          maxLength={attendances?.length}
+          maxLength={clientVisitLogs?.length}
         />
 
         <SearchBar
@@ -210,51 +219,7 @@ const Attendance = () => {
           searchKeyWord={searchKeyWord}
         />
       </div>
-
-      <div className="flex flex-col md:flex-row gap-3 md:items-center w-full mb-5">
-        <div>
-          <label>
-            <span className="text-gray-700">Status</span>
-          </label>
-          <SelectFilter
-            handleFilter={handleFilterByStatus}
-            filterName={"status"}
-            options={[
-              {
-                value: "all",
-                label: "All",
-              },
-              {
-                value: "On Time",
-                label: "On Time",
-              },
-              {
-                value: "Late",
-                label: "Late",
-              },
-              {
-                value: "Checked Out",
-                label: "Checked Out",
-              },
-              {
-                value: "Early Check-out",
-                label: "Early Check-out",
-              },
-              {
-                value: "Absent",
-                label: "Absent",
-              },
-              {
-                value: "Missed Check-out",
-                label: "Missed Check-out",
-              },
-              {
-                value: "On Leave",
-                label: "On Leave",
-              },
-            ]}
-          />
-        </div>
+      <div className="flex flex-col md:flex-row md:items-center gap-3 w-full mb-5">
         {!isUserLoading && (
           <div>
             <label>
@@ -282,7 +247,7 @@ const Attendance = () => {
         )}
         <div>
           <label>
-            <span className="text-gray-700">Date</span>
+            <span className="text-gray-700">Visit Date</span>
           </label>
           <SelectFilter
             handleFilter={handleFilterByDate}
@@ -325,12 +290,22 @@ const Attendance = () => {
           <div className="flex gap-2 w-full">
             <ExportToExcel
               data={dataToExport}
-              fileName={`Attendance_${new Date().toLocaleDateString()}`}
+              fileName={`Client_visit_log_${new Date().toLocaleDateString()}`}
             />
             <ExportToPDF
               data={dataToExport}
-              fileName={`Attendance_${new Date().toLocaleDateString()}`}
+              fileName={`Client_visit_log_${new Date().toLocaleDateString()}`}
             />
+          </div>
+        </div>
+
+        <div>
+          <label>Clear all</label>
+          <div
+            onClick={handleClearAll}
+            className="w-fit cursor-pointer bg-red-500 hover:bg-red-600 p-2 rounded text-white"
+          >
+            Clear all Now☢️
           </div>
         </div>
       </div>
@@ -341,35 +316,37 @@ const Attendance = () => {
           theads={[
             "No",
             "Employee",
-            "Time In",
-            "Time Out",
+            "Agent",
+            "Purpose",
             "Date",
-            "Location",
+            "Start Time",
+            "Expected End Time",
+            "Notes",
             "Action",
           ]}
         />
         <TableBody>
           {/* loading */}
           {isLoading ? (
-            <LoadingInTable colSpan={6} />
+            <LoadingInTable colSpan={9} />
           ) : (
             <>
-              {attendances?.length == 0 ? (
+              {clientVisitLogs?.length == 0 ? (
                 <tr>
                   <td
                     className="py-10 dark:text-white text-orange-500 text-center"
-                    colSpan={6}
+                    colSpan={9}
                   >
                     No data
                   </td>
                 </tr>
               ) : (
                 <Pagination
-                  data={attendances}
+                  data={clientVisitLogs}
                   deleteItemFn={handleDelete}
                   numberOfRecordsPerPage={numberOfRecordsPerPage}
                   renderRow={renderRows}
-                  columns={6}
+                  columns={9}
                 />
               )}
             </>
@@ -380,4 +357,4 @@ const Attendance = () => {
   );
 };
 
-export default Attendance;
+export default ClientVisitLog;

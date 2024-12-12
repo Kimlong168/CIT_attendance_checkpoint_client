@@ -163,19 +163,33 @@ const Home = () => {
                 </div>
               </Link>
             </div>
-            {/* Members */}
-            {/* <div className="flex justify-between items-center text-gray p-2 border rounded-lg shadow">
-            <div className="flex items-center space-x-3">
-              <div className="bg-red-200 p-2 rounded-full">
-                <i className="fas fa-users text-red-500"></i>
-              </div>
-              <div>
-                <h3 className="font-semibold">Members</h3>
-                <p className="text-sm text-gray-500">List all members</p>
-              </div>
+            {/* Client visit log */}
+            <div>
+              <Link
+                to={
+                  user.role == "user"
+                    ? "/user/clientVisitLog"
+                    : "/clientVisitLog"
+                }
+              >
+                <div className="flex justify-between items-center text-gray p-2 border rounded-lg shadow">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-pink-200 p-2 rounded-full">
+                      <i className="fas fa-calendar-alt text-pink-500"></i>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Client Visit Log</h3>
+                      <p className="text-sm text-gray-500">
+                        {user.role == "user"
+                          ? "Inform client visit"
+                          : "Review client visit logs"}
+                      </p>
+                    </div>
+                  </div>
+                  <IoIosArrowDropright className="text-gray-500" size={28} />
+                </div>
+              </Link>
             </div>
-            <IoIosArrowDropright className="text-gray-500" size={28} />
-          </div> */}
           </div>
         </div>
         <div className="text-center text-gray-600">Version {appVersion}</div>

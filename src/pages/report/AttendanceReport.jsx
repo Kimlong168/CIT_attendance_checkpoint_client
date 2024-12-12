@@ -28,10 +28,13 @@ const AttendanceReport = () => {
   const [date, setDate] = useState(new Date());
   const { data, isLoading, isError, refetch } = useAttendanceReport(date);
   const {
-    data: data2,
+    data: monthlyData,
     isLoading: isLoading2,
     isError: isError2,
-  } = useAttendanceReportByThisMonth(date);
+  } = useAttendanceReportByThisMonth();
+  const monthAndYear = `${new Date().toLocaleString("default", {
+    month: "long",
+  })} ${new Date().getFullYear()}`;
 
   useEffect(() => {
     refetch();
@@ -70,6 +73,8 @@ const AttendanceReport = () => {
     setDate(e.target.value);
   };
 
+  console.log("monthlyData: ", monthlyData);
+
   if (isLoading || isLoading2) {
     return <Loading />;
   } else if (isError || isError2) {
@@ -80,7 +85,9 @@ const AttendanceReport = () => {
       <div className="flex flex-col md:flex-row gap-3 md:justify-between md:items-center mb-4 px-3">
         <div className="flex gap-5">
           <div className="flex items-center w-full">
-            <label className="mr-2 truncate w-full hidden md:block">Select Date:</label>
+            <label className="mr-2 truncate w-full hidden md:block">
+              Select Date:
+            </label>
 
             <input
               className="block w-full p-2 border border-gray-300 rounded-md"
@@ -151,7 +158,7 @@ const AttendanceReport = () => {
                 {data.on_time_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       {getFormattedTimeWithAMPM(item.time_in)}
@@ -180,7 +187,7 @@ const AttendanceReport = () => {
                 {data.late_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       {item.checkInLateDuration}
@@ -215,7 +222,7 @@ const AttendanceReport = () => {
                 {data.normal_checked_out_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       {getFormattedTimeWithAMPM(item.time_out)}
@@ -243,7 +250,7 @@ const AttendanceReport = () => {
                 {data.early_check_out_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       {item.checkOutEarlyDuration}
@@ -270,7 +277,7 @@ const AttendanceReport = () => {
                 {data.missed_check_out_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                   </tr>
                 ))}
@@ -300,7 +307,7 @@ const AttendanceReport = () => {
                 {data.absent_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                   </tr>
                 ))}
@@ -324,7 +331,7 @@ const AttendanceReport = () => {
                 {data.on_leave_employees?.map((item, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border border-gray-300">
-                      {item.employee.name}
+                      {item.employee?.name}
                     </td>
                   </tr>
                 ))}
@@ -337,31 +344,33 @@ const AttendanceReport = () => {
       {/* chart */}
       <hr />
       <br />
-      <div className="p-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-bold my-3 text-orange-600">
-            Monthly Attendance Report
-          </h3>
-          <button
-            onClick={() => handleCapture("chart")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
+      {monthlyData && (
+        <div className="p-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-bold my-3 text-orange-600">
+              Monthly Attendance Report ({monthAndYear})
+            </h3>
+            <button
+              onClick={() => handleCapture("chart")}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md p-2 flex gap-2 items-center"
+            >
+              Download <PiDownloadBold />
+            </button>
+          </div>
+          <div
+            ref={captureChartRef}
+            className="grid auto-rows-auto  lg:grid-cols-2 gap-5"
           >
-            Download <PiDownloadBold />
-          </button>
+            <TotalAbsentByEmployee data={monthlyData} />
+            <TotalOnLeaveByEmployee data={monthlyData} />
+            <TotalOnTimeByEmployee data={monthlyData} />
+            <TotalNormalCheckOutByEmployee data={monthlyData} />
+            <TotalMissedCheckOutByEmployee data={monthlyData} />
+            <TotalLateByEmployee data={monthlyData} />
+            <TotalEarlyCheckOutByEmployee data={monthlyData} />
+          </div>
         </div>
-        <div
-          ref={captureChartRef}
-          className="grid auto-rows-auto  lg:grid-cols-2 gap-5"
-        >
-          <TotalAbsentByEmployee data={data2} />
-          <TotalOnLeaveByEmployee data={data2} />
-          <TotalOnTimeByEmployee data={data2} />
-          <TotalNormalCheckOutByEmployee data={data2} />
-          <TotalMissedCheckOutByEmployee data={data2} />
-          <TotalLateByEmployee data={data2} />
-          <TotalEarlyCheckOutByEmployee data={data2} />
-        </div>
-      </div>
+      )}
     </div>
   );
 };
