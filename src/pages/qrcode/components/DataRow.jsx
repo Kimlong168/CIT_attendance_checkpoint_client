@@ -7,7 +7,7 @@ import downloadQrcode from "@/utils/downloadQrcode";
 
 const url = import.meta.env.VITE_APP_BASE_URL + "/user/attendance?att=";
 
-export const renderRows = (item, index, handleDelete) => {
+export const renderRows = (item, index, handleDelete) => {  
   const wifiNames = item.allowedNetworkRanges
     .map((range) => range.wifiName)
     .join(", ");

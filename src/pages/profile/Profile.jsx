@@ -141,6 +141,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       const result = await verifyOtp.mutateAsync({
+        email: user.email,
         otp: otp,
       });
 
