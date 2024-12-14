@@ -20,7 +20,7 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 import { useContext, useEffect, useState } from "react";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
 import { MdOutlineArrowBackIos, MdOutlineCheckCircle } from "react-icons/md";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // const WORK_START_TIME = new Date().setHours(8, 30, 0); // 8:30 AM
 // const WORK_END_TIME = new Date().setHours(17, 0, 0); // 5:00 PM
 // const IPINFO_API_KEY = import.meta.env.VITE_APP_IPINFO_API_KEY;
@@ -475,14 +475,12 @@ const CheckInCheckOut = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => {
-            window.history.back();
-          }}
+        <Link
+          to="/"
           className="mt-6 flex items-center gap-2 text-white w-fit px-2 py-2 bg-red-500 hover:bg-orange-600 border border-white rounded-xl top-0 left-4 fixed"
         >
           <MdOutlineArrowBackIos />
-        </button>
+        </Link>
 
         <ConfirmModal
           show={showModal}
