@@ -15,11 +15,31 @@ export const renderRows = (item, index, handleDelete) => {
           <PopupImage image={item.profile_picture || assets.default_profile} />
         </td>
         <td className="px-4 py-3 min-w-[250px]">{item.name}</td>
-        <td className="px-4 py-3 min-w-[250px]">
-          {item.email}
-        </td>
+        <td className="px-4 py-3 min-w-[250px]">{item.email}</td>
 
         <td className="px-4 py-3 min-w-[250px] capitalize">{item.role}</td>
+        <td className="px-4 py-3 min-w-[250px] capitalize">
+          {item.role === "user" ? (
+            <>
+              {item.isAllowedRemoteCheckout ? (
+                <span className="bg-green-600/20 border-green-600 text-green-600 px-2 py-1 rounded w-[120px] text-center border">
+                  Allow
+                </span>
+              ) : (
+                <span className="bg-red-500/20 border-red-500 text-red-500 px-2 py-1 rounded w-[120px] text-center border">
+                  Not Allow
+                </span>
+              )}
+            </>
+          ) : (
+            <span>
+              {" "}
+              <span className="bg-yellow-500/20 border-yellow-500 text-yellow-500 px-2 py-1 rounded w-[120px] text-center border">
+                None
+              </span>
+            </span>
+          )}
+        </td>
         <td className="px-4 py-3 min-w-[250px]">
           {item.chat_id || "No Chat ID"}
         </td>

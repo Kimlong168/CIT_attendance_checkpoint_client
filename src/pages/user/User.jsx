@@ -102,7 +102,7 @@ const User = () => {
         <div className="flex flex-row gap-3 items-center w-full">
           <div className="w-full md:w-fit">
             <label>
-              <span className="text-gray-700">Role</span>
+              <span className="text-gray-800">Role</span>
             </label>
             <SelectFilter
               handleFilter={handleFilterByRole}
@@ -127,6 +127,7 @@ const User = () => {
             "Name",
             "Email",
             "Role",
+            "Allow Remote Checkout",
             "Chat ID",
             "Action",
           ]}
@@ -134,14 +135,14 @@ const User = () => {
         <TableBody>
           {/* loading */}
           {isLoading ? (
-            <LoadingInTable colSpan={7} />
+            <LoadingInTable colSpan={8} />
           ) : (
             <>
               {users?.length == 0 ? (
                 <tr>
                   <td
                     className="py-10 dark:text-white text-orange-500 text-center"
-                    colSpan={7}
+                    colSpan={8}
                   >
                     No data
                   </td>
@@ -152,7 +153,7 @@ const User = () => {
                   deleteItemFn={handleDelete}
                   numberOfRecordsPerPage={numberOfRecordsPerPage}
                   renderRow={renderRows}
-                  columns={7}
+                  columns={8}
                 />
               )}
             </>

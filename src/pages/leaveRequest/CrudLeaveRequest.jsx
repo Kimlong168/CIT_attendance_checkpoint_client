@@ -64,9 +64,13 @@ const CrudLeaveRequest = () => {
       console.log("leaveRequest:", leaveRequest);
       return;
     }
-    // start date must be greater than today
-    if (new Date(leaveRequest.start_date) < new Date()) {
-      notify("Start date must be greater than today", "error");
+    
+    // start date must be greater than yesterday
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (new Date(leaveRequest.start_date) <= yesterday) {
+      notify("Start date must be greater than yesterday", "error");
       return;
     }
 

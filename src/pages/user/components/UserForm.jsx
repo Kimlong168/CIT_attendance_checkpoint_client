@@ -10,6 +10,8 @@ const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
     email: initialData.email || "",
     password: initialData.password || "",
     role: initialData.role || "",
+    isAllowedRemoteCheckout:
+      initialData.isAllowedRemoteCheckout === true ? true : false,
     chat_id: initialData.chat_id || "",
     profile_picture: initialData.profile_picture || "",
   });
@@ -32,6 +34,8 @@ const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
       notify("Please fill all the fields!", "error");
       return;
     }
+    console.log("data", data);
+
     onSubmitFn(data);
   };
 
@@ -111,6 +115,23 @@ const UserForm = ({ onSubmitFn, isSubmitting, initialData = {} }) => {
           <option value="manager">Manager</option>
           <option value="user">User</option>
         </select>
+
+        {data.role === "user" && (
+          <>
+            <label className="font-medium text-sm">
+              Allow Remote Checkout?
+            </label>
+            <select
+              className="border p-2 rounded focus:outline-orange-500"
+              name="isAllowedRemoteCheckout"
+              value={data.isAllowedRemoteCheckout}
+              onChange={handleOnChange}
+            >
+              <option value={false}>Not Allow ❌</option>
+              <option value={true}>Allow ✅</option>
+            </select>
+          </>
+        )}
       </div>
 
       {/*create data button */}

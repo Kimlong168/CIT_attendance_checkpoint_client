@@ -44,6 +44,10 @@ export const useCreateUser = () => {
       formData.append("email", newUser.email);
       formData.append("password", newUser.password);
       formData.append("role", newUser.role);
+      formData.append(
+        "isAllowedRemoteCheckout",
+        newUser.isAllowedRemoteCheckout
+      );
       formData.append("image", newUser.profile_picture);
       formData.append("chat_id", newUser.chat_id);
 
@@ -65,10 +69,11 @@ export const useUpdateUser = () => {
   return useMutation(
     async (user) => {
       const formData = new FormData();
-      
+
       formData.append("name", user.name);
       formData.append("email", user.email);
       formData.append("role", user.role);
+      formData.append("isAllowedRemoteCheckout", user.isAllowedRemoteCheckout);
       formData.append("image", user.profile_picture);
       formData.append("chat_id", user.chat_id);
 
