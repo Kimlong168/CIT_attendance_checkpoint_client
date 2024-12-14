@@ -81,7 +81,7 @@ const Attendance = () => {
 
         const startOfWeek = new Date(today);
         startOfWeek.setDate(
-          today.getDate() - (today.getDay() === 0 ? 6 : today.getDay() - 1)
+          today.getDate() - (today.getDay() === 0 ? 7 : today.getDay() - 1)
         ); // Start from Monday
 
         const endOfWeek = today; // End on today
@@ -106,9 +106,9 @@ const Attendance = () => {
         const startOfYear = new Date(today.getFullYear(), 0, 1);
         const endOfYear = today; // Current date
 
-        // Calculate the start date for last 6 months
-        const startOfLast6Months = new Date(today);
-        startOfLast6Months.setMonth(today.getMonth() - 6);
+        // Calculate the start date for last 7 months
+        const startOfLast7Months = new Date(today);
+        startOfLast7Months.setMonth(today.getMonth() - 7);
 
         // Filtering based on the date parameter
         if (date === "today") {
@@ -126,8 +126,8 @@ const Attendance = () => {
         } else if (date === "this_year") {
           return recordDate >= startOfYear && recordDate <= endOfYear;
         } else {
-          // Last 6 months
-          return recordDate >= startOfLast6Months && recordDate <= today;
+          // Last 7 months
+          return recordDate >= startOfLast7Months && recordDate <= today;
         }
       });
 
@@ -184,6 +184,7 @@ const Attendance = () => {
       "Early Time": att.checkOutEarlyDuration,
       Date: getFormattedDate(att.date),
       Location: att.qr_code?.location,
+      "Checkout Remotely": att.isRemoteCheckout,
     };
   });
 
@@ -345,20 +346,21 @@ const Attendance = () => {
             "Time Out",
             "Date",
             "Location",
+            "Checkout Remotely",
             "Action",
           ]}
         />
         <TableBody>
           {/* loading */}
           {isLoading ? (
-            <LoadingInTable colSpan={6} />
+            <LoadingInTable colSpan={7} />
           ) : (
             <>
               {attendances?.length == 0 ? (
                 <tr>
                   <td
                     className="py-10 dark:text-white text-orange-500 text-center"
-                    colSpan={6}
+                    colSpan={7}
                   >
                     No data
                   </td>
@@ -369,7 +371,7 @@ const Attendance = () => {
                   deleteItemFn={handleDelete}
                   numberOfRecordsPerPage={numberOfRecordsPerPage}
                   renderRow={renderRows}
-                  columns={6}
+                  columns={7}
                 />
               )}
             </>

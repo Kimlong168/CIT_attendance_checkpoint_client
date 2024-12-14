@@ -17,6 +17,7 @@ const Home = () => {
   const [showModal, setShowModal] = useState(false);
   const { data: attendances } = useAttendancesByEmployeeId(user._id);
   const navigate = useNavigate();
+  
   useEffect(() => {
     if (attendances) {
       const isCheckedInToday = attendances

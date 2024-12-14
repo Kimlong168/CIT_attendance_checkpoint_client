@@ -46,6 +46,33 @@ export const renderRows = (item, index, handleDelete) => {
           {getFormattedDate(item.date)}
         </td>
         <td className="px-4 py-3 min-w-[250px]">{item.qr_code?.location}</td>
+        <td className="px-4 py-3 min-w-[250px]">
+          {item.time_out ? (
+            <>
+              {" "}
+              {item.isRemoteCheckout ? (
+                <span className="bg-green-600/20 border-green-600 text-green-600 px-2 py-1 rounded w-[120px] text-center border">
+                  True
+                </span>
+              ) : (
+                <span className="bg-red-500/20 border-red-500 text-red-500 px-2 py-1 rounded w-[120px] text-center border">
+                  False
+                </span>
+              )}
+            </>
+          ) : (
+            <>
+              {item.check_in_status == "Absent" ||
+              item.check_in_status == "On Leave" ? (
+                <span className="text-red-500">({item.check_in_status})</span>
+              ) : (
+                <span className="bg-yellow-500/20 border-yellow-500 text-yellow-500 px-2 py-1 rounded w-[120px] text-center border">
+                  Not Yet
+                </span>
+              )}
+            </>
+          )}
+        </td>
 
         <td className="px-4 py-3 text-sm text-center">
           <div className=" flex items-center gap-2">

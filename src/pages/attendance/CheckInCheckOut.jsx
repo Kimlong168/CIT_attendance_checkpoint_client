@@ -124,7 +124,6 @@ const CheckInCheckOut = () => {
 
       // Format as h:mm:ss
       lateDuration = `${hours}h ${minutes}m ${seconds}s`;
-      notify(`You are late for ${lateDuration}`, "info");
     }
 
     try {
@@ -139,6 +138,7 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check in successfully", "success");
+        notify(`You are late for ${lateDuration}`, "info");
         setScannerResult(null);
 
         navigate("/user/attendance");
@@ -186,7 +186,6 @@ const CheckInCheckOut = () => {
       earlyDuration = `${hours}h ${minutes}m ${seconds}s`;
 
       checkOutStatus = "Early Check-out";
-      notify(`You checked out early by ${earlyDuration}`, "info");
     }
 
     // isCheckIn.qr_code: is the whole qr_code object, we want _id only.
@@ -204,32 +203,31 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check out successfully", "success");
+        notify(`You checked out early by ${earlyDuration}`, "info");
         setScannerResult(null);
         // Save each record as an array but ensure the employee is not the same
-        if (attendances) {
-          const todayAttendances = attendances.filter((att) =>
-            isSameDate(att.time_in, new Date())
-          );
+        // if (attendances) {
+        //   const todayAttendances = attendances.filter((att) =>
+        //     isSameDate(att.time_in, new Date())
+        //   );
 
-          const updatedAttendances = todayAttendances.map((att) => {
-            if (att.employee === user._id) {
-              return { ...att, ...isSuccess.data };
-            }
-            return att;
-          });
+        //   const updatedAttendances = todayAttendances.map((att) => {
+        //     if (att.employee === user._id) {
+        //       return { ...att, ...isSuccess.data };
+        //     }
+        //     return att;
+        //   });
 
-          localStorage.setItem(
-            "attendances",
-            JSON.stringify(updatedAttendances)
-          );
-        } else {
-          localStorage.setItem("attendances", JSON.stringify([isSuccess.data]));
-        }
+        //   localStorage.setItem(
+        //     "attendances",
+        //     JSON.stringify(updatedAttendances)
+        //   );
+        // } else {
+        //   localStorage.setItem("attendances", JSON.stringify([isSuccess.data]));
+        // }
 
         navigate("/user/attendance");
-      }
-
-      if (isSuccess.status === "error") {
+      } else {
         notify(isSuccess.error.message, "error");
         setScannerResult(null);
       }
