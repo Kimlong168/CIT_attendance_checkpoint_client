@@ -50,7 +50,7 @@ export const renderRows = (item, index, handleDelete) => {
           {item.time_out ? (
             <>
               {" "}
-              {item.isRemoteCheckout ? (
+              {!item.isRemoteCheckout ? (
                 <span className="bg-green-600/20 border-green-600 text-green-600 px-2 py-1 rounded w-[120px] text-center border">
                   True
                 </span>

@@ -184,7 +184,7 @@ const Attendance = () => {
       "Early Time": att.checkOutEarlyDuration,
       Date: getFormattedDate(att.date),
       Location: att.qr_code?.location,
-      "Checkout Remotely": att.isRemoteCheckout,
+      "Office Checkout": !att.isRemoteCheckout,
     };
   });
 
@@ -346,7 +346,7 @@ const Attendance = () => {
             "Time Out",
             "Date",
             "Location",
-            "Checkout Remotely",
+            "Office Checkout",
             "Action",
           ]}
         />
