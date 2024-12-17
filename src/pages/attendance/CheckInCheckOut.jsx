@@ -138,7 +138,9 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check in successfully", "success");
-        notify(`You are late for ${lateDuration}`, "info");
+        if (lateDuration > 0) {
+          notify(`You are late by ${lateDuration}`, "info");
+        }
         setScannerResult(null);
 
         navigate("/user/attendance");
@@ -203,7 +205,10 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check out successfully", "success");
-        notify(`You checked out early by ${earlyDuration}`, "info");
+        if (earlyDuration > 0) {
+          notify(`You checked out early by ${earlyDuration}`, "info");
+        }
+
         setScannerResult(null);
         // Save each record as an array but ensure the employee is not the same
         // if (attendances) {
