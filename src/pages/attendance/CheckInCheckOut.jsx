@@ -138,7 +138,7 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check in successfully", "success");
-        if (lateDuration > 0) {
+        if (lateDuration != 0) {
           notify(`You are late by ${lateDuration}`, "info");
         }
         setScannerResult(null);
@@ -205,7 +205,7 @@ const CheckInCheckOut = () => {
       if (isSuccess.status === "success") {
         refetch();
         notify("Check out successfully", "success");
-        if (earlyDuration > 0) {
+        if (earlyDuration != 0) {
           notify(`You checked out early by ${earlyDuration}`, "info");
         }
 
