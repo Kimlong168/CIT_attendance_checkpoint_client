@@ -63,8 +63,9 @@ export const renderRows = (item, index, handleDelete) => {
           ) : (
             <>
               {item.check_in_status == "Absent" ||
+              item.check_out_status == "Missed Check-out" ||
               item.check_in_status == "On Leave" ? (
-                <span className="text-red-500">({item.check_in_status})</span>
+                <span className="text-red-500">({item.check_out_status})</span>
               ) : (
                 <span className="bg-yellow-500/20 border-yellow-500 text-yellow-500 px-2 py-1 rounded w-[120px] text-center border">
                   Not Yet

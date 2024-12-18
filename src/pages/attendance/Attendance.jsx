@@ -184,7 +184,15 @@ const Attendance = () => {
       "Early Time": att.checkOutEarlyDuration,
       Date: getFormattedDate(att.date),
       Location: att.qr_code?.location,
-      "Office Checkout": !att.isRemoteCheckout,
+      "Office Checkout": att.time_out
+        ? !att.isRemoteCheckout
+          ? "True"
+          : "False"
+        : att.check_in_status === "Absent" ||
+          att.check_out_status === "Missed Check-out" ||
+          att.check_in_status === "On Leave"
+        ? `(${att.check_out_status})`
+        : "Not Yet",
     };
   });
 
