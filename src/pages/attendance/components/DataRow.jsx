@@ -55,9 +55,16 @@ export const renderRows = (item, index, handleDelete) => {
                   True
                 </span>
               ) : (
-                <span className="bg-red-500/20 border-red-500 text-red-500 px-2 py-1 rounded w-[120px] text-center border">
-                  False
-                </span>
+                <div className="group">
+                  {" "}
+                  <span className="bg-red-500/20 border-red-500 text-red-500 px-2 py-1 rounded w-[120px] text-center border">
+                    False
+                  </span>{" "}
+                  <div className="max-w-[200px] line-clamp-1 group-hover:line-clamp-none mt-2 cursor-pointer">
+                    {" "}
+                    {item.location}
+                  </div>
+                </div>
               )}
             </>
           ) : (

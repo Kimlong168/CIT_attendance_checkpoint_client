@@ -16,6 +16,7 @@ import {
 } from "@/utils/getFormattedDate";
 import isSameDate from "@/utils/isSameDate";
 import { notify } from "@/utils/toastify";
+import { getCurrentLocation } from "@/utils/getCurrentLocation";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { useContext, useEffect, useState } from "react";
 import { IoIosArrowDropdown, IoIosArrowDropup } from "react-icons/io";
@@ -193,6 +194,8 @@ const CheckInCheckOut = () => {
     // isCheckIn.qr_code: is the whole qr_code object, we want _id only.
     console.log("qr-code id", isCheckIn.qr_code?._id);
 
+    const location = await getCurrentLocation();
+
     try {
       const isSuccess = await checkOut.mutateAsync({
         qr_code: isCheckIn.qr_code?._id, // qr_code id
@@ -200,6 +203,8 @@ const CheckInCheckOut = () => {
         time_out: currentTime,
         check_out_status: checkOutStatus,
         checkOutEarlyDuration: earlyDuration,
+        lat: location.lat,
+        lon: location.lon,
       });
 
       if (isSuccess.status === "success") {
